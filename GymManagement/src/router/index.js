@@ -6,14 +6,25 @@ import Account from "../components/Account.vue";
 import BookCourse from "../components/BookCourse.vue";
 
 const routes = [
-    { path: "/", component: Home},
-    { path: "/SignIn", component: SignIn},
-    { path: "/SignUp", component: SignUp},
-    { path: "/Account/:username", component: Account, props: true},
-    { path: "/BookCourse", component: BookCourse},
+  { path: "/", component: Home },
+  { path: "/SignIn", component: SignIn },
+  { path: "/SignUp", component: SignUp },
+  { path: "/Account", component: Account, meta: { requiresAuth: true } },
+  { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
 ];
 
-export default createRouter({
-    history: createWebHistory(),
-    routes,
-  });
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('user');
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/SignIn');
+  } else {
+    next();
+  }
+});
+
+export default router;
