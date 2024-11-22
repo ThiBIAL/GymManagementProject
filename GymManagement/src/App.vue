@@ -10,6 +10,9 @@
   </div>
 </template>
 
+<script>
+
+</script>
 
 <style>
 nav {
