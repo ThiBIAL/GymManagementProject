@@ -16,7 +16,7 @@ export default {
     return {
       username: '',
       password: '',
-      confirmPassword: '', // Correctement orthographié
+      confirmPassword: '',
       error: null,
     };
   },
@@ -28,7 +28,7 @@ export default {
       if (userExists) {
         this.error = 'Username already taken';
       } else if (this.password !== this.confirmPassword) {
-        this.error = 'The two passwords are not the same';
+        this.error = 'Both passwords must be the same';
       } else {
         const newUser = { username: this.username, password: this.password };
         storedUsers.push(newUser);
