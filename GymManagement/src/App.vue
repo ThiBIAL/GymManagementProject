@@ -34,15 +34,35 @@ export default {
 </script>
 
 <style>
+  *{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
+
 nav {
   display: flex;
+  margin: 0;
   gap: 20px;
   padding: 10px;
   justify-content: center;
+  background-color: #212121;
+  margin-bottom: 20px;
 }
 
 a {
+  color: #FFFFFF;
+  font-size: 18px;
+  padding: 10px 20px; 
+  display: inline-block;
   text-decoration: none;
-  color: black;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  height: 100%;
+}
+
+nav a:hover{
+  background-color: rgb(140, 139, 139);
+  color: #FFA500;
 }
 </style>
