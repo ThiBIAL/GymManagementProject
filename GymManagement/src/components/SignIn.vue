@@ -81,6 +81,11 @@ import InputField from './InputField.vue';
 
     }
 
+    form{
+      width: 75%;
+      margin: 0 auto;
+    }
+
     .button {
     border: none;
     border-radius: 3px;

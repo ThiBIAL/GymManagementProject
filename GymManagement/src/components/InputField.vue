@@ -26,7 +26,7 @@
     border-radius: 5px;
     font-size: 16px;
     margin-bottom: 10px;
-    width: 75%;
+    width: 100%;
   }
   input:focus {
     border-color: #FFA500;

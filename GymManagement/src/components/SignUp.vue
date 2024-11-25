@@ -1,60 +1,79 @@
 <template>
-    <div id="content">
-        <h1>Sign Up</h1>
-        <form @submit.prevent="signup">
-            <InputField v-model="username" placeholder="Username" required/>
-            <div v-if="error1" class="error">{{ error1 }}</div>
-            <InputField type="password" v-model="password" placeholder="Password" required />
-            <div v-if="error2" class="error">{{ error2 }}</div>
-            <InputField type="password" v-model="confirmPassword" placeholder="Confirm password" required />
-            <div v-if="error2" class="error">{{ error2 }}</div>
-            <button class="button" type="submit">Sign Up</button>
-        </form>
-        <div v-if="error" class="error">{{ error }}</div>
-        <div id="hr">
-            <div class="line-text">Or sign up with</div>
-        </div>
-        <div id="img">
-            <img src="../assets/alipay.png" alt="Alypay" width="50px" height="50px">
-            <img src="../assets/wechat.png" alt="Wechat" width="52px" height="52px">
-        </div>
-        <p>Already have an account ? <router-link id="signin" to="/SignIn">Sign In</router-link></p>
+  <div id="content">
+    <h1>Sign Up</h1>
+    <form @submit.prevent="signup">
+      <InputField v-model="username" placeholder="Username" required/>
+      <div v-if="error1" class="error">{{ error1 }}</div>
+      <InputField type="password" v-model="password" placeholder="Password" required />
+      <div v-if="error2" class="error">{{ error2 }}</div>
+      <InputField type="password" v-model="confirmPassword" placeholder="Confirm password" required />
+      <div v-if="error2" class="error">{{ error2 }}</div>
+      <button class="button" type="submit">Sign Up</button>
+    </form>
+      <div v-if="error" class="error">{{ error }}</div>
+      <div id="hr">
+          <div class="line-text">Or sign up with</div>
+      </div>
+      <div id="img">
+        <img src="../assets/alipay.png" alt="Alypay" width="50px" height="50px">
+        <img src="../assets/wechat.png" alt="Wechat" width="52px" height="52px">
+      </div>
+      <p>Already have an account ? <router-link id="signin" to="/SignIn">Sign In</router-link></p>
     </div>
-  </template>
+</template>
   
 <script>
-    import InputField from './InputField.vue';
+  import InputField from './InputField.vue';
 
-export default {
+  export default {
     components: { InputField },
-  data() {
-    return {
-      username: '',
-      password: '',
-      confirmPassword: '',
-      error: null,
-    };
-  },
-  methods: {
-    signup() {
-      const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-      const userExists = storedUsers.some(user => user.username === this.username);
-
-      if (userExists) {
-        this.error1 = 'Username already taken';
-      } else if (this.password !== this.confirmPassword) {
-        this.error2 = 'Both passwords must be the same';
-      } else {
-        const newUser = { username: this.username, password: this.password };
-        storedUsers.push(newUser);
-        localStorage.setItem('users', JSON.stringify(storedUsers));
-        localStorage.setItem('user', JSON.stringify(newUser));
-        localStorage.setItem('isLoggedIn', true);
-        this.$router.push('/');
-      }
+    data() {
+      return {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        error1: null,
+        error2: null,
+      };
     },
-  },
-};
+    methods: {
+      signup() {
+        const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+        const userExists = storedUsers.some(user => user.username === this.username);
+
+        if (userExists) {
+          this.error1 = '*Username already taken';
+          this.error2 = null;
+        } else if (this.password !== this.confirmPassword) {
+          this.error2 = '*Both passwords must be the same';
+          this.error1 = null;
+        } else {
+          const newUser = { username: this.username, password: this.password };
+          storedUsers.push(newUser);
+          localStorage.setItem('users', JSON.stringify(storedUsers));
+          localStorage.setItem('user', JSON.stringify(newUser));
+          localStorage.setItem('isLoggedIn', true);
+          this.$emit('userLoggedIn', true);
+          this.$router.push('/');
+        }
+      },
+    },
+    mounted() {
+    this.$watch('username', () => {
+      this.error1 = null;
+    });
+    this.$watch('password', () => {
+      if (this.password === this.confirmPassword) {
+        this.error2 = null;
+      }
+    });
+    this.$watch('confirmPassword', () => {
+      if (this.password === this.confirmPassword) {
+        this.error2 = null;
+      };
+    });
+    }
+  };
 </script>
 
 <style>
@@ -63,40 +82,45 @@ export default {
     }
 
     h1 {
-    color: #333333;
-    font-weight: bold;
-    margin-bottom: 20px;
+      color: #333333;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
 
 
     #content{
-        width: 50%;
-        text-align: center;
-        margin: 0 auto;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        background-color: rgb(236, 234, 234);
-        border: solid 1px rgb(217, 217, 217);
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 50%;
+      text-align: center;
+      margin: 0 auto;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background-color: rgb(236, 234, 234);
+      border: solid 1px rgb(217, 217, 217);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
+    form{
+      width: 75%;
+      margin: 0 auto;
+      text-align: left;
     }
 
     .button {
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    width: 75%;
-    height: 40px;
-    cursor: pointer;
-    font-size: 16px;
-    color: #FFFFFF;
-    background-color: #FFA500;
-    transition: background-color 0.3s ease;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      width: 100%;
+      height: 40px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #FFFFFF;
+      background-color: #FFA500;
+      transition: background-color 0.3s ease;
     }
 
     .button:hover {
-    background-color: #FF8C00;
+      background-color: #FF8C00;
     }
 
     #img {
@@ -112,6 +136,12 @@ export default {
         padding: 0px;
         margin-top: 5px;
     }
+
+  .error{
+    color: red;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
 
     #hr {
     text-align: center;

@@ -24,10 +24,10 @@ export default {
       this.isLoggedIn = loggedIn;
     },
     logout() {
+      localStorage.setItem('isLoggedIn', false);
       localStorage.removeItem('user');
-      localStorage.setItem('isLoggedIn', 'false');
       this.isLoggedIn = false;
-      this.$router.push('/SignIn');
+      this.$router.push('/');
     },
   },
 };
@@ -72,7 +72,7 @@ nav a:hover{
   border: none;
   padding: 10px 20px;
   font-size: 18px;
-  font-weight: bold;
+
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
