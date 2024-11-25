@@ -6,7 +6,7 @@
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
       <router-link v-if="isLoggedIn" to="/Account">Account</router-link>
-      <button v-if="isLoggedIn" @click="logout">Logout</button>
+      <button v-if="isLoggedIn" @click="logout" id="logout">Logout</button>
     </nav>
     <router-view @userLoggedIn="updateLoginState"></router-view>
   </div>
@@ -65,4 +65,16 @@ nav a:hover{
   background-color: rgb(140, 139, 139);
   color: #FFA500;
 }
+
+#logout {
+  background-color: #FFA500;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 </style>

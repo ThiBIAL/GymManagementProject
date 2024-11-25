@@ -4,7 +4,7 @@
       <form @submit.prevent="login">
         <InputField v-model="username" placeholder="Username" required/>
         <InputField type="password" v-model="password" placeholder="Password" required />
-        <button type="submit">Sign In</button>
+        <button class="button" type="submit">Sign In</button>
       </form>
       <div v-if="error" class="error">{{ error }}</div>
       <div id="hr">
@@ -81,7 +81,7 @@ import InputField from './InputField.vue';
 
     }
 
-    button {
+    .button {
     border: none;
     border-radius: 3px;
     cursor: pointer;
@@ -94,7 +94,7 @@ import InputField from './InputField.vue';
     transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    .button:hover {
     background-color: #FF8C00;
     }
 

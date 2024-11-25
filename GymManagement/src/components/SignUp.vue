@@ -8,7 +8,7 @@
             <div v-if="error2" class="error">{{ error2 }}</div>
             <InputField type="password" v-model="confirmPassword" placeholder="Confirm password" required />
             <div v-if="error2" class="error">{{ error2 }}</div>
-            <button type="submit">Sign Up</button>
+            <button class="button" type="submit">Sign Up</button>
         </form>
         <div v-if="error" class="error">{{ error }}</div>
         <div id="hr">
@@ -82,7 +82,7 @@ export default {
 
     }
 
-    button {
+    .button {
     border: none;
     border-radius: 3px;
     cursor: pointer;
@@ -95,7 +95,7 @@ export default {
     transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    .button:hover {
     background-color: #FF8C00;
     }
 
