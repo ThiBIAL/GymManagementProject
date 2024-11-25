@@ -3,10 +3,12 @@
       <h1>Sign In</h1>
       <form @submit.prevent="login">
         <InputField v-model="username" placeholder="Username" required/>
+        <div v-if="error1" class="error">{{ error1 }}</div>
         <InputField type="password" v-model="password" placeholder="Password" required />
+        <div v-if="error2" class="error">{{ error2 }}</div>
         <button class="button" type="submit">Sign In</button>
       </form>
-      <div v-if="error" class="error">{{ error }}</div>
+      
       <div id="hr">
         <div class="line-text">Or sign in with</div>
       </div>
@@ -27,7 +29,8 @@ import InputField from './InputField.vue';
       return {
         username: '',
         password: '',
-        error: null,
+        error1: null,
+        error2: null,
       };
     },
     methods: {
@@ -46,13 +49,22 @@ import InputField from './InputField.vue';
   
             this.$router.push('/');
           } else {
-            this.error = 'Incorrect password';
+            this.error2 = 'Incorrect password';
           }
         } else {
-          this.error = 'Username not found';
+          this.error1 = 'Username not found';
         }
       },
     },
+
+    mounted() {
+      this.$watch('username', () => {
+        this.error1 = null
+      })
+      this.$watch('password', () => {
+        this.error2 = null
+      })
+    }
   };
 </script>
 
@@ -84,6 +96,7 @@ import InputField from './InputField.vue';
     form{
       width: 75%;
       margin: 0 auto;
+      text-align: left;
     }
 
     .button {
