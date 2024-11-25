@@ -112,7 +112,7 @@
   </script>
   
 
-<style>
+<style scoped>
     h1{
         text-align: center;
     }

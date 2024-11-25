@@ -68,7 +68,7 @@ import InputField from './InputField.vue';
   };
 </script>
 
-<style>
+<style scoped>
     *{
         box-sizing: border-box;
     }
@@ -103,7 +103,7 @@ import InputField from './InputField.vue';
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    width: 75%;
+    width: 100%;
     height: 40px;
     cursor: pointer;
     font-size: 16px;
