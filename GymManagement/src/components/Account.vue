@@ -25,7 +25,7 @@
             Address: 
             <input type="text" v-model="editedUser.address" />
           </label>
-          <button @click="saveProfile">Confirm</button>
+          <button class="buttonAccount" @click="saveProfile">Confirm</button>
         </div>
   
         <div v-else>
@@ -34,11 +34,11 @@
           <p>Email: {{ email }}</p>
           <p>Telephone Number: {{ numberTel }}</p>
           <p>Address: {{ address }}</p>
-          <button @click="editProfile">Modify Profile</button>
+          <button class="buttonAccount" @click="editProfile">Modify Profile</button>
         </div>
       </div>
   
-      <button>
+      <button class="buttonAccount">
         Choose a Subscription
       </button>
     </div>
@@ -148,7 +148,7 @@
     border-radius: 3px;
     }
 
-    button {
+    .buttonAccount{
     margin-top: 10px;
     padding: 10px 20px;
     border: none;
@@ -159,7 +159,7 @@
     transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    .buttonAccount:hover {
     background-color: #FF8C00;
     }
 </style>
