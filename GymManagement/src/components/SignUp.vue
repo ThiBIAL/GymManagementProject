@@ -4,6 +4,8 @@
     <form @submit.prevent="signup">
       <InputField v-model="username" placeholder="Username" required/>
       <div v-if="error1" class="error">{{ error1 }}</div>
+      <InputField v-model="email" placeholder="Email" required/>
+      <div v-if="error3" class="error">{{ error3 }}</div>
       <InputField type="password" v-model="password" placeholder="Password" required />
       <div v-if="error2" class="error">{{ error2 }}</div>
       <InputField type="password" v-model="confirmPassword" placeholder="Confirm password" required />
@@ -30,16 +32,19 @@
     data() {
       return {
         username: '',
+        email: '',
         password: '',
         confirmPassword: '',
         error1: null,
         error2: null,
+        error3: null,
       };
     },
     methods: {
       signup() {
         const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
         const userExists = storedUsers.some(user => user.username === this.username);
+        const emailExists = storedUsers.some(user => user.email === this.email);
 
         if (userExists) {
           this.error1 = '*Username already taken';
@@ -47,8 +52,13 @@
         } else if (this.password !== this.confirmPassword) {
           this.error2 = '*Both passwords must be the same';
           this.error1 = null;
-        } else {
-          const newUser = { username: this.username, password: this.password };
+        } else if (emailExists) {
+          this.error3 = '*Email already taken';
+          this.error1 = null;
+          this.error2 = null;
+          
+        }else {
+          const newUser = { username: this.username, email: this.email, password: this.password };
           storedUsers.push(newUser);
           localStorage.setItem('users', JSON.stringify(storedUsers));
           localStorage.setItem('user', JSON.stringify(newUser));
@@ -61,6 +71,9 @@
     mounted() {
     this.$watch('username', () => {
       this.error1 = null;
+    });
+    this.$watch('email', () => {
+      this.error3 = null;
     });
     this.$watch('password', () => {
       if (this.password === this.confirmPassword) {
