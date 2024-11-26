@@ -80,7 +80,7 @@ nav a:hover{
   border: none;
   padding: 10px 20px;
   font-size: 18px;
-
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
