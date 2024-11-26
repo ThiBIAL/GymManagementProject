@@ -54,7 +54,6 @@ nav {
 }
 
 a {
-  margin-top: 10px;
   color: #FFFFFF;
   font-size: 18px;
   padding: 10px 20px; 
