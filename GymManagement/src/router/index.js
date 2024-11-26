@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Welcome from '../components/Welcome.vue';
 import Home from '../components/Home.vue';
 import SignIn from '../components/SignIn.vue';
 import SignUp from '../components/SignUp.vue';
@@ -6,7 +7,8 @@ import Account from '../components/Account.vue';
 import BookCourse from '../components/BookCourse.vue';
 
 const routes = [
-  { path: "/", component: Home },
+  { path: "/", component: Welcome },
+  { path: "/Home", component: Home, meta: { requiresAuth: true } },
   { path: "/SignIn", component: SignIn },
   { path: "/SignUp", component: SignUp },
   { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },

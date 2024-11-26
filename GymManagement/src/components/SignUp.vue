@@ -64,7 +64,7 @@
           localStorage.setItem('user', JSON.stringify(newUser));
           localStorage.setItem('isLoggedIn', true);
           this.$emit('userLoggedIn', true);
-          this.$router.push('/');
+          this.$router.push('/Home');
         }
       },
     },

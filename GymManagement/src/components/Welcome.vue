@@ -1,23 +1,16 @@
 <template>
     <div id="content">
-        <h1>Welcome back <div id="username">{{ username }}</div> !</h1>
-        <h3>Ready to crushyour fitness goal today ?</h3>
+        <h1>Welcome to <strong>Easy Fit</strong></h1> <h3>Your Partner for a Healthier Lifestyle!</h3>
+        
     </div>
-    
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                username: JSON.parse(localStorage.getItem('user')).username,
-            };
-        },
-    };
+
 </script>
 
 <style scoped>
-    *{
+       *{
         box-sizing: border-box;
     }
 
@@ -26,13 +19,14 @@
         text-align: center;
         padding-top: 10px;
     }
+
     h3 {
         color: #333333;
         text-align: center;
         padding-top: 10px;
     }
 
-    #username {
+    strong {
         color: #FFA500;
         display: inline;
     }

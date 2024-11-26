@@ -1,7 +1,9 @@
 <template>
   <div>
     <nav>
-      <router-link to="/">Home</router-link>
+      <router-link class="logo" to="/"><img src="/src/assets/logo.jpg" alt="logo" width="60px" height="60px"></router-link>
+      <router-link v-if="!isLoggedIn" to="/">Welcome</router-link>
+      <router-link v-if="isLoggedIn" to="/Home">Home</router-link>
       <router-link v-if="isLoggedIn" to="/BookCourse">Book a course</router-link>
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
@@ -42,6 +44,7 @@ export default {
 
 nav {
   display: flex;
+  align-items: center;
   margin: 0;
   gap: 20px;
   padding: 10px;
@@ -60,6 +63,11 @@ a {
   transition: background-color 0.3s ease;
   height: 100%;
 }
+
+a.logo {
+  padding: 0 0; /* Remove padding for the logo */
+}
+
 
 nav a:hover{
   background-color: rgb(140, 139, 139);
