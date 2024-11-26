@@ -4,7 +4,7 @@
     <form @submit.prevent="signup">
       <InputField v-model="username" placeholder="Username" required/>
       <div v-if="error1" class="error">{{ error1 }}</div>
-      <InputField v-model="email" placeholder="Email" required/>
+      <InputField v-model="email" type="email" placeholder="Email" required/>
       <div v-if="error3" class="error">{{ error3 }}</div>
       <InputField type="password" v-model="password" placeholder="Password" required />
       <div v-if="error2" class="error">{{ error2 }}</div>

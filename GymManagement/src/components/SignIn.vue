@@ -94,6 +94,12 @@ import InputField from './InputField.vue';
     margin: 0 auto;
     text-align: left;
   }
+  
+  .error{
+    color: red;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
 
   .button {
   border: none;
@@ -113,50 +119,50 @@ import InputField from './InputField.vue';
   }
 
   #img {
-      display: flex;
-      justify-content: center;
-      gap: 10px; /* Ajuste la valeur selon le besoin */
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Ajuste la valeur selon le besoin */
   }
 
 
   p, #signup{
-      color: #a1a0a0;
-      font-size: 14px;
-      padding: 0px;
-      margin-top: 5px;
+    color: #a1a0a0;
+    font-size: 14px;
+    padding: 0px;
+    margin-top: 5px;
   }
 
   #hr {
-  text-align: center;
-  position: relative;
-  margin: 20px 0;
+    text-align: center;
+    position: relative;
+    margin: 20px 0;
   }
 
   .line-text {
-  display: inline-block;
-  position: relative;
-  color: #a1a0a0;
-  background-color: rgb(236, 234, 234);
-  padding: 0 10px;
-  z-index: 1;
+    display: inline-block;
+    position: relative;
+    color: #a1a0a0;
+    background-color: rgb(236, 234, 234);
+    padding: 0 10px;
+    z-index: 1;
   }
 
   #hr::before,
   #hr::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  height: 1px;
-  background-color: #a1a0a0;
-  transform: translateY(-50%);
-  width: 45%;
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    background-color: #a1a0a0;
+    transform: translateY(-50%);
+    width: 45%;
   }
 
   #hr::before {
-  left: 12%;
+    left: 12%;
   }
 
   #hr::after {
-  right: 12%;
+    right: 12%;
   }
 </style>

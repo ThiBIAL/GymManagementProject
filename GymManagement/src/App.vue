@@ -54,6 +54,7 @@ nav {
 }
 
 a {
+  margin-top: 10px;
   color: #FFFFFF;
   font-size: 18px;
   padding: 10px 20px; 
@@ -68,10 +69,10 @@ a.logo {
   padding: 0 0; /* Remove padding for the logo */
 }
 
-
-nav a:hover{
+nav a:not(.logo):hover {
   background-color: rgb(140, 139, 139);
   color: #FFA500;
+  border-radius: 8px;
 }
 
 #logout {
