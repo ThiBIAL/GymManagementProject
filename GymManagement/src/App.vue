@@ -65,13 +65,12 @@ a {
 }
 
 a.logo {
-  padding: 0 0; /* Remove padding for the logo */
+  padding: 0 0;
 }
 
 nav a:not(.logo):hover {
   background-color: rgb(140, 139, 139);
   color: #FFA500;
-  border-radius: 8px;
 }
 
 #logout {
