@@ -77,4 +77,8 @@ nav a:hover{
   transition: background-color 0.3s ease;
 }
 
+#logout:hover {
+    background-color: #FF8C00;
+    }
+
 </style>
