@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Account</h1>
+    <h1>Modify Profile</h1>
     <div id="block">
       <h3 id="profil">Profile</h3>
 
@@ -33,13 +33,10 @@
         <p>Email: {{ email }}</p>
         <p>Telephone Number: {{ numberTel }}</p>
         <p>Address: {{ address }}</p>
+        <p>Subscription: {{ subscription }}</p>
         <button class="buttonAccount" @click="editProfile">Modify Profile</button>
       </div>
     </div>
-
-    <button class="buttonAccount" @click="logOut">
-      Log Out
-    </button>
   </div>
 </template>
 
@@ -52,6 +49,7 @@ export default {
       email: '',
       numberTel: '',
       address: '',
+      subscription:'',
       isEditing: false, // Pour basculer entre mode édition et affichage
     };
   },
@@ -61,9 +59,9 @@ export default {
     if (user) {
       this.username = user.username || '';
       this.password = user.password || '';
-      this.email = user.email || '';
-      this.numberTel = user.numberTel || '';
-      this.address = user.address || '';
+      this.email = user.email || 'unknown';
+      this.numberTel = user.numberTel || 'unknown';
+      this.address = user.address || 'unknown';
     }
   },
   methods: {
@@ -72,9 +70,10 @@ export default {
       const updatedUser = {
         username: this.username || '',
         password: this.password || '',
-        email: this.email || '',
-        numberTel: this.numberTel || '',
-        address: this.address || '',
+        email: this.email || 'unknown',
+        numberTel: this.numberTel || 'unknown',
+        address: this.address || 'unknown',
+        subscription : this.subscription || 'None'
       };
 
 
