@@ -35,6 +35,7 @@
         email: '',
         password: '',
         confirmPassword: '',
+        state: '',
         error1: null,
         error2: null,
         error3: null,
@@ -58,7 +59,12 @@
           this.error2 = null;
           
         }else {
-          const newUser = { username: this.username, email: this.email, password: this.password };
+          if (this.username === "root"){
+            this.state = "admin";
+          } else {
+            this.state = "member";
+          }
+          const newUser = { username: this.username, email: this.email, password: this.password, state: this.state };
           storedUsers.push(newUser);
           localStorage.setItem('users', JSON.stringify(storedUsers));
           localStorage.setItem('user', JSON.stringify(newUser));
