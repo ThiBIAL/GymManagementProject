@@ -121,7 +121,7 @@ import InputField from './InputField.vue';
   #img {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Ajuste la valeur selon le besoin */
+    gap: 10px;
   }
 
 
