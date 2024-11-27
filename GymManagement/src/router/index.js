@@ -5,55 +5,46 @@ import SignIn from '../components/SignIn.vue';
 import SignUp from '../components/SignUp.vue';
 import Account from '../components/Account.vue';
 import BookCourse from '../components/BookCourse.vue';
-<<<<<<< HEAD
-import Subscription from '../components/Subscription.vue';
-
-=======
 import Member from '../components/Member.vue';
->>>>>>> 2048771a93ea669b1a1e58935d708f8dfcf1e6ff
 
 const routes = [
-  { path: "/", component: Welcome },
-  { path: "/Home", component: Home, meta: { requiresAuth: true } },
-  { path: "/SignIn", component: SignIn },
-  { path: "/SignUp", component: SignUp },
-  { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },
-  { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
-<<<<<<< HEAD
-  {path: "/Subscription", component: Subscription},
-=======
-  {path: "/Member", component: Member, meta: { requiresAdmin: true } }
->>>>>>> 2048771a93ea669b1a1e58935d708f8dfcf1e6ff
+  { path: "/", component: Welcome },
+  { path: "/Home", component: Home, meta: { requiresAuth: true } },
+  { path: "/SignIn", component: SignIn },
+  { path: "/SignUp", component: SignUp },
+  { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },
+  { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
+  {path: "/Member", component: Member, meta: { requiresAdmin: true } }
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHistory(),
+  routes,
 });
 
 router.beforeEach((to, from, next) => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  const isAuthenticated = !!user;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isAuthenticated = !!user;
 
 
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    next('/SignIn');
-    alert('You need to be logged in to access this page');
-  }
-  else if (to.path === '/Account' && isAuthenticated) {
-    next(`/Account/${user.username}`);
-  } 
-  else if (to.matched.some(record => record.meta.requiresAdmin)) {
-    if (!isAuthenticated || user.state !== 'admin') {
-      alert('Acces reserved to administrators');
-      next('/');
-    } else {
-      next();
-    }
-  } 
-  else {
-    next();
-  }
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/SignIn');
+    alert('You need to be logged in to access this page');
+  }
+  else if (to.path === '/Account' && isAuthenticated) {
+    next(`/Account/${user.username}`);
+  } 
+  else if (to.matched.some(record => record.meta.requiresAdmin)) {
+    if (!isAuthenticated || user.state !== 'admin') {
+      alert('Acces reserved to administrators');
+      next('/');
+    } else {
+      next();
+    }
+  } 
+  else {
+    next();
+  }
 });
 
 
