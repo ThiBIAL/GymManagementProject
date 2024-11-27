@@ -17,7 +17,7 @@
         @mouseover="showDropdown = true"
         @mouseleave="showDropdown = false"
       >
-        <router-link to="/Account">Account</router-link>
+        <router-link>Account</router-link>
         <ul v-show="showDropdown" class="dropdown-menu">
           <li>
             <router-link to="/Account">Modify Profile</router-link>
