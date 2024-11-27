@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="modify-profile-page">
     <h1>Modify Profile</h1>
-    <div id="block">
-      <h3 id="profil">Profile</h3>
+    <div class="block">
+      <h3 class="profil">Profile</h3>
 
       <div v-if="isEditing">
         <label>
@@ -24,21 +24,28 @@
           Address:
           <input type="text" v-model="address" />
         </label>
-        <button class="buttonAccount" @click="saveProfile">Confirm</button>
+        <button class="button-account" @click="saveProfile">Confirm</button>
       </div>
 
-      <div v-else id="block2">
+      <div v-else class="block2">
         <p>Username: {{ username }}</p>
         <p>Password: {{ password }}</p>
         <p>Email: {{ email }}</p>
         <p>Telephone Number: {{ numberTel }}</p>
         <p>Address: {{ address }}</p>
         <p>Subscription: {{ subscription }}</p>
-        <button class="buttonAccount" @click="editProfile">Modify Profile</button>
+        <button class="button-account" @click="editProfile">Modify Profile</button>
+      </div>
+    </div>
+    <div class="block">
+      <h3 class=profil>Payment information</h3>
+      <div>
+
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -62,6 +69,7 @@ export default {
       this.email = user.email || 'unknown';
       this.numberTel = user.numberTel || 'unknown';
       this.address = user.address || 'unknown';
+      this.subscription = user.subscription || '';
     }
   },
   methods: {
@@ -103,55 +111,71 @@ export default {
 
 
   
+<style>
+/* Styles pour la page de modification du profil */
+.modify-profile-page {
+  /* Étendre le conteneur principal pour couvrir toute la page */
+  width: 100%;
+  height: 100%; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+}
 
-<style >
-    h1{
-        text-align: center;
-    }
+.modify-profile-page h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    #block{
-        border:2px black solid;
-        border-radius: 3px;
-        width: 500px;
-        margin: 20px;
-        padding: 20px;
-    }
+.modify-profile-page .block {
+  border: 2px black solid;
+  border-radius: 3px;
+  width: 500px;
+  margin: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+}
 
-    p{
-        color: black;
-    }
+.modify-profile-page p {
+  color: black;
+}
 
-    #profil{
-        text-align: center;
-    }
+.modify-profile-page .profil {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    label {
-    display: block;
-    margin: 10px 0;
-    font-weight: bold;
-    }
+.modify-profile-page label {
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+}
 
-    input {
-    display: block;
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    }
+.modify-profile-page input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
 
-    .buttonAccount{
-    margin-top: 10px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #FFA500;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    }
+.modify-profile-page .button-account {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #FFA500;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-    .buttonAccount:hover {
-    background-color: #FF8C00;
-    }
+.modify-profile-page .button-account:hover {
+  background-color: #FF8C00;
+}
 </style>

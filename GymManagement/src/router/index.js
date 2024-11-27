@@ -4,6 +4,7 @@ import Home from '../components/Home.vue';
 import SignIn from '../components/SignIn.vue';
 import SignUp from '../components/SignUp.vue';
 import Account from '../components/Account.vue';
+import Subscription from '../components/Subscription.vue';
 import BookCourse from '../components/BookCourse.vue';
 import Member from '../components/Member.vue';
 
@@ -14,7 +15,8 @@ const routes = [
   { path: "/SignUp", component: SignUp },
   { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },
   { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
-  {path: "/Member", component: Member, meta: { requiresAdmin: true } }
+  {path: "/Member", component: Member, meta: { requiresAdmin: true } },
+  {path: "/Subscription",component:Subscription}
 ];
 
 const router = createRouter({
