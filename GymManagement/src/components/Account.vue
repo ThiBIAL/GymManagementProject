@@ -1,181 +1,199 @@
 <template>
-  <div class="modify-profile-page">
-    <h1>Modify Profile</h1>
-    <div class="block">
-      <h3 class="profil">Profile</h3>
+  <div id="content">
+    <h1>Account</h1>
+    <div v-if="isEditing">
+      <label for="username">Username:</label>
+      <input type="text" v-model="username" id="username" disabled />
 
-      <div v-if="isEditing">
-        <label>
-          Username: {{ username }}
-        </label>
-        <label>
-          Password:
-          <input type="password" v-model="password" />
-        </label>
-        <label>
-          Email:
-          <input type="email" v-model="email" />
-        </label>
-        <label>
-          Telephone Number:
-          <input type="text" v-model="numberTel" />
-        </label>
-        <label>
-          Address:
-          <input type="text" v-model="address" />
-        </label>
-        <button class="button-account" @click="saveProfile">Confirm</button>
+      <label for="lastName">Last Name:</label>
+      <input type="text" v-model="lastName" id="lastName" disabled />
+
+      <label for="firstName">First Name:</label>
+      <input type="text" v-model="firstName" id="firstName" disabled/>
+
+      <label for="email">Email:</label>
+      <input type="email" v-model="email" id="email" />
+
+      <label for="password">Password:</label>
+      <input type="password" v-model="password" id="password" />
+
+      <label for="numberTel">Phone Number:</label>
+      <input type="text" v-model="numberTel" id="numberTel" />
+
+      <label for="address">Address:</label>
+      <input type="text" v-model="address" id="address" />
+
+      
+      <div id="subscription">
+        <label for="subscription">Subscription:</label>
+        {{ subscription }}
       </div>
 
-      <div v-else class="block2">
-        <p>Username: {{ username }}</p>
-        <p>Password: {{ password }}</p>
-        <p>Email: {{ email }}</p>
-        <p>Telephone Number: {{ numberTel }}</p>
-        <p>Address: {{ address }}</p>
-        <p>Subscription: {{ subscription }}</p>
-        <button class="button-account" @click="editProfile">Modify Profile</button>
-      </div>
+
+      <button @click="saveProfile">Save</button>
+      <button @click="cancelEdit">Cancel</button>
     </div>
-    <div class="block">
-      <h3 class=profil>Payment information</h3>
-      <div>
-
-      </div>
+    <div id="info" v-else>
+      <p><strong>Username:</strong> {{ username }}</p>
+      <p><strong>Last Name:</strong> {{ lastName }}</p>
+      <p><strong>First Name:</strong> {{ firstName }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Password:</strong> {{ password }}</p>
+      <p><strong>Phone Number:</strong> {{ numberTel }}</p>
+      <p><strong>Address:</strong> {{ address }}</p>
+      <p><strong>Subscription:</strong> {{ subscription }}</p>
+      <button id="edit" @click="editProfile">Edit Profile</button>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
   data() {
     return {
       username: '',
+      lastName: '',
+      firstName: '',
       password: '',
       email: '',
       numberTel: '',
       address: '',
-      subscription:'',
-      isEditing: false, // Pour basculer entre mode édition et affichage
+      subscription: '',
+      isEditing: false
     };
   },
   mounted() {
     const user = JSON.parse(localStorage.getItem('user'));
-    console.log('Loaded User:', user); 
     if (user) {
       this.username = user.username || '';
       this.password = user.password || '';
-      this.email = user.email || 'unknown';
-      this.numberTel = user.numberTel || 'unknown';
-      this.address = user.address || 'unknown';
+      this.lastName = user.lastName || '';
+      this.firstName = user.firstName || '';
+      this.email = user.email || '';
+      this.numberTel = user.numberTel || '';
+      this.address = user.address || '';
       this.subscription = user.subscription || '';
     }
   },
   methods: {
     saveProfile() {
-      // Mise à jour des informations de l'utilisateur
       const updatedUser = {
-        username: this.username || '',
-        password: this.password || '',
-        email: this.email || 'unknown',
-        numberTel: this.numberTel || 'unknown',
-        address: this.address || 'unknown',
-        subscription : this.subscription || 'None'
+        username: this.username,
+        lastName: this.lastName,
+        firstName: this.firstName,
+        password: this.password,
+        email: this.email,
+        numberTel: this.numberTel,
+        address: this.address,
+        subscription: this.subscription
       };
-
 
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const index = users.findIndex((u) => u.username === this.username);
 
       if (index !== -1) {
-        // Mise à jour si l'utilisateur existe
         users[index] = updatedUser;
       } else {
-        // Ajouter l'utilisateur si absent
         users.push(updatedUser);
       }
 
       localStorage.setItem('users', JSON.stringify(users));
-      console.log('Updated Users:', users); // Debug pour vérifier la liste mise à jour
+      localStorage.setItem('user', JSON.stringify(updatedUser)); // Update the current user in localStorage
+      console.log('Updated Users:', users);
 
       this.isEditing = false;
     },
     editProfile() {
       this.isEditing = true;
     },
-  },
+    cancelEdit() {
+      this.isEditing = false;
+    }
+  }
 };
-
 </script>
 
 
   
-<style>
-/* Styles pour la page de modification du profil */
-.modify-profile-page {
-  /* Étendre le conteneur principal pour couvrir toute la page */
-  width: 100%;
-  height: 100%; 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #f9f9f9;
-  box-sizing: border-box;
-}
-
-.modify-profile-page h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.modify-profile-page .block {
-  border: 2px black solid;
-  border-radius: 3px;
-  width: 500px;
-  margin: 20px;
+<style scoped>
+#content {
+  width: 80%;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modify-profile-page p {
-  color: black;
+#info{
+  text-align: center;
+  padding: 20px;
+  width: 40%;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modify-profile-page .profil {
+div p {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+h1 {
+  color: #333333;
   text-align: center;
   margin-bottom: 20px;
 }
 
-.modify-profile-page label {
+label {
   display: block;
-  margin: 10px 0;
+  margin-top: 10px;
   font-weight: bold;
 }
 
-.modify-profile-page input {
-  display: block;
+input {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   margin-top: 5px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 3px;
-  box-sizing: border-box;
+  border-radius: 4px;
 }
 
-.modify-profile-page .button-account {
-  margin-top: 10px;
-  padding: 10px 20px;
+#edit{
   border: none;
+  border-radius: 3px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 16px;
+  color: #FFFFFF;
   background-color: #FFA500;
-  color: white;
-  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.modify-profile-page .button-account:hover {
-  background-color: #FF8C00;
+button:first-of-type {
+  background-color: #4CAF50;
+  color: white;
 }
+
+button:last-of-type {
+  background-color: #f44336;
+  color: white;
+}
+
+#subscription {
+  margin-bottom: 10px;
+  white-space: nowrap;
+}
+
 </style>

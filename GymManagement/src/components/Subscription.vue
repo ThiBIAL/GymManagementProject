@@ -67,14 +67,15 @@
   
   <style>
   .subscription-page {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f7f7f7;
-    margin-top: 50px;
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: rgb(236, 234, 234);
+    border: solid 1px rgb(217, 217, 217);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .subscription-page h1 {

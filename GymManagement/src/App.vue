@@ -10,7 +10,6 @@
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
       
-      <!-- Account dropdown -->
       <div
         v-if="isLoggedIn"
         class="dropdown"
@@ -22,13 +21,19 @@
           <li>
             <router-link to="/Account">Modify Profile</router-link>
           </li>
+          <li v-if="isAdmin">
+            <router-link to="/Member">Manage Member</router-link>
+          </li>
           <li>
             <router-link to="/Subscription">Subscription</router-link>
+          </li>
+          <li id="liButton">
+            <button v-if="isLoggedIn" @click="logout" id="logout1">Logout</button>
           </li>
         </ul>
       </div>
 
-      <button v-if="isLoggedIn" @click="logout" id="logout">Logout</button>
+      
     </nav>
     <router-view @userLoggedIn="updateLoginState"></router-view>
   </div>
@@ -38,21 +43,37 @@
 export default {
   data() {
     return {
-      isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
-      showDropdown: false, // Pour gérer l'affichage du menu déroulant
+      isLoggedIn: false,
+      isAdmin: false,
+      showDropdown: false
     };
   },
+  created() {
+    this.checkLoginState();
+  },
   methods: {
+    checkLoginState() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        this.isLoggedIn = true;
+        this.isAdmin = user.state === 'admin';
+      } else {
+        this.isLoggedIn = false;
+        this.isAdmin = false;
+      }
+    },
     updateLoginState(loggedIn) {
       this.isLoggedIn = loggedIn;
+      this.checkLoginState();
     },
     logout() {
       localStorage.setItem('isLoggedIn', false);
       localStorage.removeItem('user');
       this.isLoggedIn = false;
+      this.isAdmin = false;
       this.$router.push('/');
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -61,13 +82,14 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 nav {
+  text-align: center;
   display: flex;
   align-items: center;
   margin: 0;
-  gap: 20px;
   padding: 10px;
   justify-content: center;
   background-color: #212121;
@@ -83,6 +105,7 @@ a {
   font-weight: bold;
   transition: background-color 0.3s ease;
   height: 100%;
+  min-width: 160px;
 }
 
 a.logo {
@@ -105,11 +128,25 @@ nav a:not(.logo):hover {
   transition: background-color 0.3s ease;
 }
 
+#liButton button {
+  background: none;
+  border: none;
+  background-color: #FFA500;
+  color: #FFFFFF;
+  font-size: 14px;
+  padding: 10px 20px;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+}
+
+#liButton button:hover {
+  background-color: #FF8C00;
+}
 #logout:hover {
   background-color: #FF8C00;
 }
 
-/* Styles pour le menu déroulant */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -126,10 +163,12 @@ nav a:not(.logo):hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: none;
   z-index: 1000;
+  min-width: 160px;
+  
 }
 
 .dropdown-menu li {
-  padding: 5px 20px;
+  font-size: 12px;
 }
 
 .dropdown-menu li:hover {
@@ -137,12 +176,12 @@ nav a:not(.logo):hover {
 }
 
 .dropdown-menu a {
+  font-size: 14px;
   color: #FFFFFF;
   text-decoration: none;
   display: block;
 }
 
-/* Utiliser `v-show` pour basculer */
 .dropdown:hover .dropdown-menu {
   display: block;
 }

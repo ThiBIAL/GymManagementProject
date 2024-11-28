@@ -4,6 +4,8 @@
     <form @submit.prevent="signup">
       <InputField v-model="username" placeholder="Username" required/>
       <div v-if="error1" class="error">{{ error1 }}</div>
+      <InputField v-model="lastName" placeholder="Last Name" required/>
+      <InputField v-model="firstName" placeholder="First Time" required/>
       <InputField v-model="email" type="email" placeholder="Email" required/>
       <div v-if="error3" class="error">{{ error3 }}</div>
       <InputField type="password" v-model="password" placeholder="Password" required />
@@ -32,6 +34,8 @@
     data() {
       return {
         username: '',
+        lastName: '',
+        firstName: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -64,7 +68,7 @@
           } else {
             this.state = "member";
           }
-          const newUser = { username: this.username, email: this.email, password: this.password, state: this.state };
+          const newUser = { username: this.username, email: this.email, lastName: this.lastName, firstName: this.firstName, password: this.password, state: this.state };
           storedUsers.push(newUser);
           localStorage.setItem('users', JSON.stringify(storedUsers));
           localStorage.setItem('user', JSON.stringify(newUser));
