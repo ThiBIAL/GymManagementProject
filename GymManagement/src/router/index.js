@@ -16,7 +16,7 @@ const routes = [
   { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },
   { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
   {path: "/Member", component: Member, meta: { requiresAdmin: true } },
-  {path: "/Subscription",component:Subscription}
+  {path: "/Subscription",component:Subscription},
 ];
 
 const router = createRouter({
