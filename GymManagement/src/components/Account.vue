@@ -59,6 +59,7 @@ export default {
       numberTel: '',
       address: '',
       subscription: '',
+      state: '',
       isEditing: false
     };
   },
@@ -73,6 +74,7 @@ export default {
       this.numberTel = user.numberTel || '';
       this.address = user.address || '';
       this.subscription = user.subscription || '';
+      this.state = user.state || '';
     }
   },
   methods: {
@@ -85,7 +87,8 @@ export default {
         email: this.email,
         numberTel: this.numberTel,
         address: this.address,
-        subscription: this.subscription
+        subscription: this.subscription,
+        state: this.state
       };
 
       const users = JSON.parse(localStorage.getItem('users')) || [];
