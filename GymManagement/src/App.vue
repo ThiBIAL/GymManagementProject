@@ -32,10 +32,9 @@
           </li>
         </ul>
       </div>
-
       
     </nav>
-    <router-view @userLoggedIn="updateLoginState"></router-view>
+    <router-view @userLoggedIn="updateLoginState" @logout="logout"></router-view>
   </div>
 </template>
 
@@ -72,6 +71,7 @@ export default {
       this.isLoggedIn = false;
       this.isAdmin = false;
       this.$router.push('/');
+      this.updateLoginState(false); // Met à jour l'état après la déconnexion
     }
   }
 };

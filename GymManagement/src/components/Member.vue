@@ -56,8 +56,9 @@
           Voulez-vous vraiment changer le rôle de <strong>{{ selectedUser?.username }}</strong> en
           <strong>{{ tempRole }}</strong> ?
         </p>
-        <button @click="confirmChange">Confirmer</button>
         <button @click="cancelChange">Annuler</button>
+        <button @click="confirmChange">Confirmer</button>
+        
       </div>
     </div>
     <div v-if="showUserInfoModal" class="modal-overlay">
@@ -291,12 +292,12 @@ select {
 }
 
 .modal button:first-of-type {
-  background-color: #4caf50;
+  background-color: #f44336;
   color: white;
 }
 
 .modal button:last-of-type {
-  background-color: #f44336;
+  background-color: #4caf50;
   color: white;
 }
 
