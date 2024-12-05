@@ -2,6 +2,7 @@
   <div class="book-course">
     <h1>Book a Sport Course</h1>
     <p class="description">Select one of the available courses below and confirm your booking.</p>
+    <br>
 
     <div class="course-list">
       <div class="course" v-for="course in courses" :key="course.id">
@@ -64,11 +65,13 @@
 
 <style scoped>
   .book-course {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
+    width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
   }
 
   .course-list {
@@ -76,6 +79,7 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    
   }
 
   .course {
@@ -85,6 +89,7 @@
     width: 80%;
     box-sizing: border-box;
     position: relative;
+    background-color: #d4d3d34f;
   }
 
   .course > * {

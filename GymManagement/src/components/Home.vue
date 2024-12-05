@@ -60,7 +60,7 @@
         height: 100vh;
         width: 80%;
         margin: 0 auto;
-        background-color: rgb(236, 234, 234);
+        background-color: #f9f9f9;
         border: solid 1px rgb(217, 217, 217);
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
