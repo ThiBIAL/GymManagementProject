@@ -123,6 +123,10 @@ strong {
     margin: 20px auto;
     width: 90%;
     max-width: 800px;
+    border: black 2px solid;
+    padding:50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 1);
 }
 
 h2 {
