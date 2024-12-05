@@ -149,8 +149,11 @@ export default {
 
 <style scoped>
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
+
 
 #content {
   width: 80%;
@@ -159,6 +162,7 @@ export default {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 h1,
@@ -189,6 +193,8 @@ li {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
+  height: 60px;
+  font-size: 22px;
 }
 
 .admin {
@@ -218,6 +224,9 @@ select {
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
+  height: 40px;
+  width: 100px;
+  font-size: 18px;
 }
 
 .infoButton {
@@ -227,6 +236,9 @@ select {
   background-color: #007bff;
   color: #fff;
   cursor: pointer;
+  height: 40px;
+  width: 60px;
+  font-size: 18px;
 }
 
 .infoButton:hover {
@@ -243,31 +255,39 @@ select {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal {
-  background-color: #fff;
-  padding: 20px;
+  background-color: #ffffff;
   border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 40%;
+  max-width: 400px;
+  width: 100%;
   text-align: center;
+  margin: auto;
 }
 
 .modal h2 {
+  font-size: 1.5rem;
+  color: #333;
   margin-bottom: 20px;
 }
 
 .modal p {
+  font-size: 1rem;
+  color: #555;
   margin-bottom: 20px;
 }
 
 .modal button {
   padding: 10px 20px;
-  margin: 5px;
+  margin: 0 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 .modal button:first-of-type {
@@ -278,5 +298,11 @@ select {
 .modal button:last-of-type {
   background-color: #f44336;
   color: white;
+}
+
+.modal .button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 </style>

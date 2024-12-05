@@ -156,7 +156,7 @@ export default {
 
 
   
-<style >
+<style scoped>
 /* General Styles */
 .subscription-page {
   width: 100%;
