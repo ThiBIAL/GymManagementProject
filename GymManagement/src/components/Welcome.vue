@@ -5,6 +5,10 @@
             <h3>Your Partner for a Healthier Lifestyle!</h3>
         </header>
 
+        <section id="intro-image">
+            <img src="../assets/Fitnessgym.jpg" alt="Gym Image" class="intro-image">
+        </section>
+
         <section id="subscriptions">
             <h2>Our Membership Plans</h2>
             <div class="subscription-card" v-for="plan in subscriptions" :key="plan.id">
@@ -13,6 +17,8 @@
                 <span class="price">{{ plan.price }}</span>
             </div>
         </section>
+
+
 
         <section id="faq">
             <h2>Frequently Asked Questions</h2>
@@ -85,7 +91,11 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
+
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -186,4 +196,13 @@ h2 {
 #contact button:hover {
     background-color: #e69500;
 }
+
+.intro-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
 </style>
