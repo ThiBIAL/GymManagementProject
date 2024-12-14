@@ -6,18 +6,20 @@
 
     <div class="course-list">
       <div class="course" v-for="course in courses" :key="course.id">
-        <h2>{{ course.name }}</h2>
-        <p><strong>Coach:</strong> {{ course.coach }}</p>
-        <p><strong>Day:</strong> {{ course.day }}</p>
-        <p><strong>Time:</strong> {{ course.time }}</p>
+        <h2>{{ course.courseName }}</h2>
+        <p><strong>Coach:</strong> {{ course.coachName }}</p>
+        <p><strong>Difficulty:</strong> {{ course.courseDifficulty }}</p>
+        <p><strong>Start Date:</strong> {{ new Date(course.startCourse).toLocaleDateString() }}</p>
+        <p><strong>End Date:</strong> {{ new Date(course.endCourse).toLocaleDateString() }}</p>
         <button @click="bookCourse(course)">Book Now</button>
 
         <div v-if="selectedCourse && selectedCourse.id === course.id" class="confirmation">
           <h3>Confirmation</h3>
-          <p>You have selected: <strong>{{ selectedCourse.name }}</strong></p>
-          <p><strong>Coach:</strong> {{ selectedCourse.coach }}</p>
-          <p><strong>Day:</strong> {{ selectedCourse.day }}</p>
-          <p><strong>Time:</strong> {{ selectedCourse.time }}</p>
+          <p>You have selected: <strong>{{ selectedCourse.courseName }}</strong></p>
+          <p><strong>Coach:</strong> {{ selectedCourse.coachName }}</p>
+          <p><strong>Difficulty:</strong> {{ selectedCourse.courseDifficulty }}</p>
+          <p><strong>Start Date:</strong> {{ new Date(selectedCourse.startCourse).toLocaleDateString() }}</p>
+          <p><strong>End Date:</strong> {{ new Date(selectedCourse.endCourse).toLocaleDateString() }}</p>
           <button @click="confirmBooking">Confirm Booking</button>
         </div>
       </div>
@@ -25,110 +27,135 @@
   </div>
 </template>
 
-
 <script>
-  export default {
-    data() {
-      return {
-        courses: [
-          { id: 1, name: "Yoga Class", coach: "Samuel Doyen", day: "Monday", time: "4:00 PM" },
-          { id: 2, name: "Pilates Class", coach: "Thibault Bial", day: "Wednesday", time: "10:00 AM" },
-          { id: 3, name: "Zumba Class", coach: "Ethan Guingand", day: "Friday", time: "2:00 PM" },
-        ],
-        selectedCourse: null,
-      };
-    },
-    methods: {
-      bookCourse(course) {
-        this.selectedCourse = course;
-      },
-      confirmBooking() {
-        let bookedCourses = JSON.parse(localStorage.getItem('bookedCourses')) || [];
-        
-        const isAlreadyBooked = bookedCourses.some(
-          (bookedCourse) => bookedCourse.id === this.selectedCourse.id
-        );
+import axios from '../config/axiosInstance';
 
-        if (isAlreadyBooked) {
-          alert(`You have already booked the ${this.selectedCourse.name}!`);
-        } else {
-          bookedCourses.push(this.selectedCourse);
-          localStorage.setItem('bookedCourses', JSON.stringify(bookedCourses));
-          alert(`You have successfully booked the ${this.selectedCourse.name}!`);
+export default {
+  data() {
+    return {
+      courses: [], // Courses from the database
+      selectedCourse: null,
+    };
+  },
+  mounted() {
+    this.fetchCourses();
+  },
+  methods: {
+    async fetchCourses() {
+      try {
+        const response = await axios.get('/courses');
+        this.courses = response.data;
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        alert('An error occurred while fetching courses.');
+      }
+    },
+    bookCourse(course) {
+      this.selectedCourse = course;
+    },
+    async confirmBooking() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          alert('You need to be logged in to book a course.');
+          return this.$router.push('/SignIn');
         }
 
+        await axios.post(
+          `/courses/book/${this.selectedCourse.id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        alert(`You have successfully booked the ${this.selectedCourse.courseName}!`);
         this.selectedCourse = null;
-      },
+        this.fetchCourses();
+      } catch (error) {
+        console.error('Error booking course:', error);
+        alert('An error occurred while booking the course.');
+      }
     },
-  };
+  },
+};
 </script>
 
 <style scoped>
-  .book-course {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
+.book-course {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
-  .course-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    
-  }
+.course-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-  .course {
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 8px;
-    width: 80%;
-    box-sizing: border-box;
-    position: relative;
-    background-color: #d4d3d34f;
-  }
+.course {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  position: relative;
+  background-color: #ffffff;
+  transition: transform 0.2s;
+}
 
-  .course > * {
-    margin: 10px;
-  }
+.course:hover {
+  transform: scale(1.02);
+}
 
-  button {
-    background-color: #FFA500;
-    color: #FFFFFF;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 10px;
-  }
+.course h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
 
-  button:hover {
-    background-color: #FF8C00;
-  }
+.course p {
+  margin: 5px 0;
+  color: #555;
+}
 
-  .confirmation {
-    padding: 15px;
-    border: 1px solid #007bff;
-    border-radius: 8px;
-    background-color: #f0f8ff;
-    width: 90%;
-    margin: 20px auto 0;
-  }
+button {
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  .course-list .confirmation {
-    display: none;
-  }
+button:hover {
+  background-color: #ff8c00;
+}
 
-  .course .confirmation {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.confirmation {
+  padding: 20px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  background-color: #e7f3ff;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  text-align: left;
+}
 
+.confirmation h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
 </style>

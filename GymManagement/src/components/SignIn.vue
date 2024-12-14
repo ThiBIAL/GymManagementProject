@@ -2,13 +2,13 @@
   <div id="content">
     <h1>Sign In</h1>
     <form @submit.prevent="login">
-      <InputField v-model="username" placeholder="Username" required/>
+      <InputField v-model="username" placeholder="Username" required />
       <div v-if="error1" class="error">{{ error1 }}</div>
       <InputField type="password" v-model="password" placeholder="Password" required />
       <div v-if="error2" class="error">{{ error2 }}</div>
       <button class="button" type="submit">Sign In</button>
     </form>
-    
+
     <div id="hr">
       <div class="line-text">Or sign in with</div>
     </div>
@@ -16,54 +16,52 @@
       <img src="../assets/alipay.png" alt="Alypay" width="50px" height="50px">
       <img src="../assets/wechat.png" alt="Wechat" width="52px" height="52px">
     </div>
-    <p>Don't have an account ? <router-link id="signup" to="/SignUp">Sign Up</router-link></p>
+    <p>Don't have an account? <router-link id="signup" to="/SignUp">Sign Up</router-link></p>
   </div>
 </template>
- 
+
 <script>
 import InputField from './InputField.vue';
+import axios from '../config/axiosInstance';
 
-  export default {
-    components: { InputField },
-    data() {
-      return {
-        username: '',
-        password: '',
-        error1: null,
-        error2: null,
-      };
-    },
-    methods: {
-      login() {
-        const storedUser = JSON.parse(localStorage.getItem('users')) || [];
-        const user = storedUser.find(user => user.username === this.username);
-  
-        if (user) {
-          if (user.password === this.password) {
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('isLoggedIn', true);
-            
-            this.$emit('userLoggedIn', true);
-  
-            this.$router.push('/Home');
-          } else {
-            this.error2 = 'Incorrect password';
-          }
-        } else {
-          this.error1 = 'Username not found';
-        }
-      },
-    },
+export default {
+  components: { InputField },
+  data() {
+    return {
+      username: '',
+      password: '',
+      error1: null,
+      error2: null,
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        const response = await axios.post('/auth/login', {
+          username: this.username,
+          password: this.password,
+        });
+        localStorage.setItem('token', response.data.token);
+        console.log('Token stored:', response.data.token);
 
-    mounted() {
-      this.$watch('username', () => {
-        this.error1 = null
-      })
-      this.$watch('password', () => {
-        this.error2 = null
-      })
-    }
-  };
+        this.$emit('userLoggedIn', true); // Émet un événement pour indiquer que l'utilisateur est connecté
+        this.$router.push('/Home');
+      } catch (error) {
+        console.error('Login error:', error.response?.data || error.message);
+        alert('Failed to log in. Please try again.');
+      }
+    },
+  },
+
+  mounted() {
+    this.$watch('username', () => {
+      this.error1 = null;
+    });
+    this.$watch('password', () => {
+      this.error2 = null;
+    });
+  },
+};
 </script>
 
 <style scoped>

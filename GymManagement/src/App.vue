@@ -2,24 +2,24 @@
   <div>
     <nav>
       <router-link class="logo" to="/">
-        <img src="/src/assets/logo.jpg" alt="logo" width="60px" height="60px" />
+        <img src="/logo.jpg" alt="logo" width="60px" height="60px" />
       </router-link>
       <router-link v-if="!isLoggedIn" to="/">Welcome</router-link>
       <router-link v-if="isLoggedIn" to="/Home">Home</router-link>
       <router-link v-if="isLoggedIn" to="/BookCourse">Book a course</router-link>
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
-      
+
       <div
         v-if="isLoggedIn"
         class="dropdown"
         @mouseover="showDropdown = true"
         @mouseleave="showDropdown = false"
       >
-        <router-link>Account</router-link>
+        <router-link to="/Account/:username">Account</router-link>
         <ul v-show="showDropdown" class="dropdown-menu">
           <li>
-            <router-link to="/Account">Modify Profile</router-link>
+            <router-link to="/Account/:username">Modify Profile</router-link>
           </li>
           <li v-if="isAdmin">
             <router-link to="/Member">Manage Member</router-link>
@@ -32,50 +32,74 @@
           </li>
         </ul>
       </div>
-      
     </nav>
     <router-view @userLoggedIn="updateLoginState" @logout="logout"></router-view>
   </div>
 </template>
 
 <script>
+import axios from './config/axiosInstance';
+
 export default {
   data() {
     return {
       isLoggedIn: false,
       isAdmin: false,
-      showDropdown: false
+      showDropdown: false,
     };
   },
   created() {
     this.checkLoginState();
   },
   methods: {
-    checkLoginState() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user) {
-        this.isLoggedIn = true;
-        this.isAdmin = user.state === 'admin';
-      } else {
+    async checkLoginState() {
+      console.log('checkLoginState called');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found in localStorage.');
         this.isLoggedIn = false;
         this.isAdmin = false;
+        return;
+      }
+
+      try {
+        const response = await axios.get('/auth/validate', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('Validation response:', response.data);
+
+        const user = response.data.user;
+        if (user) {
+          this.isLoggedIn = true;
+          this.isAdmin = user.role === 'admin';
+          console.log('User is logged in:', user);
+        } else {
+          console.log('No user data returned from validation.');
+          this.logout();
+        }
+      } catch (error) {
+        console.error('Error validating token:', error.response?.data || error.message);
+        this.logout();
       }
     },
-    updateLoginState(loggedIn) {
+    async updateLoginState(loggedIn) {
       this.isLoggedIn = loggedIn;
-      this.checkLoginState();
+      await this.checkLoginState();
     },
     logout() {
-      localStorage.setItem('isLoggedIn', false);
-      localStorage.removeItem('user');
+      localStorage.removeItem('token');
       this.isLoggedIn = false;
       this.isAdmin = false;
       this.$router.push('/');
-      this.updateLoginState(false); // Met à jour l'état après la déconnexion
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style>
+/* Style identique */
+</style>
+
 
 <style>
 * {

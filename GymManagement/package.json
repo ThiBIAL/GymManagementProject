@@ -4,19 +4,23 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test": "vue-cli-service test"
   },
   "dependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.5",
+    "sequelize": "^6.37.5",
     "svg-tags": "^1.0.0",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5",
     "vuex": "^4.1.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.1.4",
-    "vite": "^5.4.10",
-    "vite-plugin-vue-devtools": "^7.5.4"
   }
 }

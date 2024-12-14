@@ -4,10 +4,10 @@
     <div class="user" v-if="admins.length">
       <h2 class="subTitle">Admins:</h2>
       <ul>
-        <li v-for="user in admins" :key="user.username" class="admin">
+        <li v-for="user in admins" :key="user.id" class="admin">
           {{ user.username }}
           <div class="divSelect">
-            <select :value="user.state" @change="(event) => updateUserRole(user, event)">
+            <select :value="user.role" @change="(event) => updateUserRole(user, event)">
               <option value="admin">Admin</option>
               <option value="coach">Coach</option>
               <option value="member">Member</option>
@@ -20,10 +20,10 @@
     <div class="user" v-if="coaches.length">
       <h2 class="subTitle">Coaches:</h2>
       <ul>
-        <li v-for="user in coaches" :key="user.username" class="coach">
+        <li v-for="user in coaches" :key="user.id" class="coach">
           {{ user.username }}
           <div class="divSelect">
-            <select :value="user.state" @change="(event) => updateUserRole(user, event)">
+            <select :value="user.role" @change="(event) => updateUserRole(user, event)">
               <option value="admin">Admin</option>
               <option value="coach">Coach</option>
               <option value="member">Member</option>
@@ -36,10 +36,10 @@
     <div class="user" v-if="members.length">
       <h2 class="subTitle">Members:</h2>
       <ul>
-        <li v-for="user in members" :key="user.username" class="member">
+        <li v-for="user in members" :key="user.id" class="member">
           {{ user.username }}
           <div class="divSelect">
-            <select :value="user.state" @change="(event) => updateUserRole(user, event)">
+            <select :value="user.role" @change="(event) => updateUserRole(user, event)">
               <option value="admin">Admin</option>
               <option value="coach">Coach</option>
               <option value="member">Member</option>
@@ -51,30 +51,33 @@
     </div>
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
-        <h2>Confirmer le changement</h2>
+        <h2>Confirm Change</h2>
         <p>
-          Voulez-vous vraiment changer le rôle de <strong>{{ selectedUser?.username }}</strong> en
-          <strong>{{ tempRole }}</strong> ?
+          Are you sure you want to change the role of <strong>{{ selectedUser?.username }}</strong> to
+          <strong>{{ tempRole }}</strong>?
         </p>
-        <button @click="cancelChange">Annuler</button>
-        <button @click="confirmChange">Confirmer</button>
-        
+        <button @click="cancelChange">Cancel</button>
+        <button @click="confirmChange">Confirm</button>
       </div>
     </div>
     <div v-if="showUserInfoModal" class="modal-overlay">
       <div class="modal">
-        <h2>Informations sur l'utilisateur</h2>
-        <p><strong>Nom d'utilisateur :</strong> {{ selectedUser?.username }}</p>
-        <p><strong>Email :</strong> {{ selectedUser?.email }}</p>
-        <p><strong>Rôle actuel :</strong> {{ selectedUser?.state }}</p>
-        <button @click="closeModal">Fermer</button>
+        <h2>User Information</h2>
+        <div
+          v-for="(value, key) in userDetails"
+          :key="key"
+          class="user-info-row"
+        >
+          <p><strong>{{ formatKey(key) }}:</strong> {{ value }}</p>
+        </div>
+        <button @click="closeModal">Close</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { nextTick } from 'vue';
+import axios from '../config/axiosInstance';
 
 export default {
   data() {
@@ -86,50 +89,48 @@ export default {
       showModal: false,
       showUserInfoModal: false,
       selectedUser: null,
-      tempRole: ''
+      userDetails: {},
+      tempRole: '',
     };
   },
   created() {
     this.fetchUsers();
   },
   methods: {
-    fetchUsers() {
-      const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-      this.users = storedUsers;
-      this.sortUsers();
+    async fetchUsers() {
+      try {
+        const response = await axios.get('/members');
+        this.users = response.data;
+        this.sortUsers();
+      } catch (error) {
+        console.error('Error fetching users:', error.response?.data || error.message);
+        alert('Failed to fetch users. Please try again later.');
+      }
     },
     sortUsers() {
-      this.admins = this.users.filter(user => user.state === 'admin');
-      this.coaches = this.users.filter(user => user.state === 'coach');
-      this.members = this.users.filter(user => user.state === 'member');
+      this.admins = this.users.filter((user) => user.role === 'admin');
+      this.coaches = this.users.filter((user) => user.role === 'coach');
+      this.members = this.users.filter((user) => user.role === 'member');
     },
     updateUserRole(user, event) {
       this.selectedUser = user;
       this.tempRole = event.target.value;
       this.showModal = true;
     },
-    confirmChange() {
+    async confirmChange() {
       if (this.selectedUser) {
-        const userIndex = this.users.findIndex(user => user.username === this.selectedUser.username);
-        if (userIndex !== -1) {
-          this.users[userIndex].state = this.tempRole;
-          localStorage.setItem('users', JSON.stringify(this.users));
+        try {
+          await axios.put(`/members/${this.selectedUser.id}`, {
+            role: this.tempRole,
+          });
+          this.selectedUser.role = this.tempRole;
           this.sortUsers();
-
-          const currentUser = JSON.parse(localStorage.getItem('user'));
-          if (currentUser.username === this.selectedUser.username) {
-            currentUser.state = this.tempRole;
-            localStorage.setItem('user', JSON.stringify(currentUser));
-
-            if (currentUser.state !== 'admin') {
-              nextTick(() => {
-                this.$router.push('/Home');
-              });
-            }
-          }
+          this.showModal = false;
+        } catch (error) {
+          console.error('Error updating user role:', error.response?.data || error.message);
+          alert('Failed to update user role. Please try again.');
         }
       }
-      this.showModal = false;
     },
     cancelChange() {
       this.selectedUser = null;
@@ -138,13 +139,24 @@ export default {
     },
     viewUserDetails(user) {
       this.selectedUser = user;
+      this.userDetails = { ...user }; // Clone user details
+      delete this.userDetails.password;
+      delete this.userDetails.id;
+      delete this.userDetails.createdAt;
+      delete this.userDetails.updatedAt; // Remove the password field
       this.showUserInfoModal = true;
+    },
+    formatKey(key) {
+      return key
+        .replace(/([A-Z])/g, ' $1') // Add a space before capital letters
+        .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
     },
     closeModal() {
       this.selectedUser = null;
+      this.userDetails = {};
       this.showUserInfoModal = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -154,7 +166,6 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
 
 #content {
   width: 80%;
@@ -194,8 +205,8 @@ li {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
-  height: 60px;
-  font-size: 22px;
+  height: 50px;
+  font-size: 15px;
 }
 
 .admin {
@@ -225,9 +236,9 @@ select {
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
-  height: 40px;
-  width: 100px;
-  font-size: 18px;
+  height: 35px;
+  width: 90px;
+  font-size: 15px;
 }
 
 .infoButton {
@@ -237,9 +248,9 @@ select {
   background-color: #007bff;
   color: #fff;
   cursor: pointer;
-  height: 40px;
+  height: 35px;
   width: 60px;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .infoButton:hover {
@@ -279,7 +290,7 @@ select {
 .modal p {
   font-size: 1rem;
   color: #555;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .modal button {
@@ -299,11 +310,5 @@ select {
 .modal button:last-of-type {
   background-color: #4caf50;
   color: white;
-}
-
-.modal .button-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
 }
 </style>

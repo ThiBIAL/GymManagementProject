@@ -7,44 +7,85 @@ import Account from '../components/Account.vue';
 import Subscription from '../components/Subscription.vue';
 import BookCourse from '../components/BookCourse.vue';
 import Member from '../components/Member.vue';
+import axios from '../config/axiosInstance';
 
 const routes = [
-    { path: "/", component: Welcome },
-    { path: "/Home", component: Home, meta: { requiresAuth: true } },
-    { path: "/SignIn", component: SignIn },
-    { path: "/SignUp", component: SignUp },
-    { path: "/Account/:username", component: Account, meta: { requiresAuth: true } },
-    { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true } },
-    {path: "/Member", component: Member, meta: { requiresAdmin: true } },
-    {path: "/Subscription",component:Subscription},
-];
+    { path: "/", component: Welcome, meta: { title: "Welcome to EasyFit" } },
+    { path: "/Home", component: Home, meta: { title: "Home - EasyFit" } },
+    { path: "/SignIn", component: SignIn, meta: { title: "Sign In - EasyFit" } },
+    { path: "/SignUp", component: SignUp, meta: { title: "Sign Up - EasyFit" } },
+    { path: "/Account/:username", component: Account, meta: { title: "Account - EasyFit" } },
+    { path: "/BookCourse", component: BookCourse, meta: { title: "Book a Course - EasyFit" } },
+    { path: "/Member", component: Member, meta: { title: "Manage Members - EasyFit" } },
+    { path: "/Subscription", component: Subscription, meta: { title: "Subscription - EasyFit" } },
+  ];  
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
-router.beforeEach((to, from, next) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const isAuthenticated = !!user;
+router.beforeEach(async (to, from, next) => {
+    const token = localStorage.getItem('token');
 
+    if (to.meta.title) {
+        document.title = to.meta.title;
+      }
+    next();
 
- if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    next('/SignIn');
-    alert('You need to be logged in to access this page');
- }
- else if (to.path === '/Account' && isAuthenticated) {
-    next(`/Account/${user.username}`);
- } 
- else if (to.matched.some(record => record.meta.requiresAdmin)) {
-    if (!isAuthenticated || user.state !== 'admin') {
-        alert('Acces reserved to administrators');
-        next('/');
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!token) {
+            alert('You need to be logged in to access this page');
+            return next('/SignIn');
+        }
+
+        try {
+            const response = await axios.get('/auth/validate', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const user = response.data.user; // Corrected to access user object
+
+            console.log('Authenticated user:', user);
+
+            if (to.name === 'Account' && to.params.username !== user.username) {
+                return next(`/Account/${user.username}`);
+            }
+
+            next();
+        } catch (error) {
+            console.error('Authentication error:', error);
+            alert('Session expired. Please log in again.');
+            localStorage.removeItem('token');
+            return next('/SignIn');
+        }
+    } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+        if (!token) {
+            alert('Access reserved to administrators');
+            return next('/');
+        }
+
+        try {
+            const response = await axios.get('/auth/validate', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const user = response.data.user; // Corrected to access user object
+
+            console.log('Authorization check:', user);
+
+            if (user.role !== 'admin') {
+                alert('Access reserved to administrators');
+                return next('/');
+            }
+
+            next();
+        } catch (error) {
+            console.error('Authorization error:', error);
+            alert('Session expired or unauthorized access.');
+            localStorage.removeItem('token');
+            return next('/SignIn');
+        }
     } else {
         next();
-    }
-    } else {
-    next();
     }
 });
 
