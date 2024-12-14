@@ -36,11 +36,7 @@ app.get('/api/avatar', (req, res) => {
 app.use('/src/assets', express.static(path.join(__dirname, 'src/assets')));
 
 // Middleware
-app.use(cors({
-    origin: 'http://localhost:8080',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-}));
+app.use(cors());
 app.use(bodyParser.json());
 
 // Test DB connection
