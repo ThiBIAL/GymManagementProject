@@ -10,6 +10,9 @@ import memberRoutes from './routes/members.js';
 import courseRoutes from './routes/courses.js';
 import subscriptionTypeRoutes from './routes/subscriptionTypes.js';
 import userSubscriptionRoutes from './routes/userSubscriptions.js';
+import foodMonitoringRoutes from './routes/FoodMonitoring.js';
+import './models/association.js';
+
 
 // Initialize Express app
 const app = express();
@@ -36,11 +39,7 @@ app.get('/api/avatar', (req, res) => {
 app.use('/src/assets', express.static(path.join(__dirname, 'src/assets')));
 
 // Middleware
-app.use(cors({
-    origin: 'http://localhost:8080',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-}));
+app.use(cors());
 app.use(bodyParser.json());
 
 // Test DB connection
@@ -61,6 +60,7 @@ app.use('/api/members', memberRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/subscription-types', subscriptionTypeRoutes);
 app.use('/api/user-subscriptions', userSubscriptionRoutes);
+app.use('/api/food-monitoring', foodMonitoringRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

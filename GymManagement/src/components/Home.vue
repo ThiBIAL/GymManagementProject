@@ -7,17 +7,28 @@
     <h2>Your courses:</h2>
     <div v-if="bookedCourses.length">
       <div v-for="course in bookedCourses" :key="course.id" class="course-item">
-        <p><strong>{{ course.name }}</strong></p>
-        <p><strong>Coach:</strong> {{ course.coach }}</p>
-        <p><strong>Day:</strong> {{ course.day }}</p>
-        <p><strong>Time:</strong> {{ course.time }}</p>
+        <p><strong>Course Name:</strong> {{ course.courseName || 'N/A' }}</p>
+        <p><strong>Start Time:</strong> {{ new Date(course.startCourse).toLocaleString() || 'N/A' }}</p>
+        <p><strong>Coach:</strong> {{ course.coachName || 'N/A' }}</p>
+        <p><strong>Difficulty:</strong> {{ course.courseDifficulty || 'N/A' }}</p>
         <button @click="deleteCourse(course.id)">Delete</button>
       </div>
     </div>
     <div v-else>
       <p>No courses booked yet.</p>
     </div>
+
     <h2>Your personal food monitoring:</h2>
+    <div v-if="foodMonitoring.length">
+      <div v-for="(item, index) in foodMonitoring" :key="index" class="food-monitoring-item">
+        <p><strong>Type:</strong> {{ item.type }}</p>
+        <p><strong>Duration:</strong> {{ item.duration }}</p>
+        <p><strong>Allergy:</strong> {{ item.allergy }}</p>
+      </div>
+    </div>
+    <div v-else>
+      <p>No food monitoring data available.</p>
+    </div>
   </div>
 </template>
 
@@ -29,6 +40,7 @@ export default {
     return {
       username: null,
       bookedCourses: [],
+      foodMonitoring: [],
     };
   },
   async mounted() {
@@ -37,35 +49,83 @@ export default {
       const response = await axios.get('/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      this.username = response.data.user.username; // Récupérez les données de l'utilisateur
+      this.username = response.data.user.username; // Retrieve the username
+
+      // Fetch the booked courses
+      await this.fetchBookedCourses();
+
+      // Fetch food monitoring data
+      await this.fetchFoodMonitoring();
     } catch (error) {
       console.error('Failed to fetch profile:', error.response?.data || error.message);
-      alert('Session expired. Please log in again.');
+      alert('Session expired or error occurred. Please log in again.');
       this.$router.push('/SignIn');
     }
   },
+
   methods: {
-    async deleteCourse(courseId) {
+    // Fetch booked courses
+    async fetchBookedCourses() {
       try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`/courses/${courseId}`, {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/courses/booked/${this.username}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        this.bookedCourses = response.data; // Update booked courses
 
-        // Update local courses after deletion
+        console.log("Booked courses:", this.bookedCourses); // Debugging: Check the response structure
+
+      } catch (error) {
+        console.error('Error fetching booked courses:', error);
+        alert('Failed to load booked courses.');
+      }
+    },
+
+    // Fetch food monitoring data
+    async fetchFoodMonitoring() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/food-monitoring/${this.username}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.foodMonitoring = response.data; // Update food monitoring data
+      } catch (error) {
+        console.error('Error fetching food monitoring data:', error);
+      }
+    },
+
+    // Delete a course
+    async deleteCourse(courseId) {
+    try {
+        if (!courseId) {
+            console.error("Course ID is missing.");
+            alert("Course ID is missing.");
+            return;
+        }
+
+        const token = localStorage.getItem("token"); // Si vous utilisez un token
+        const response = await axios.delete(`/courses/${courseId}`, {
+            headers: { Authorization: `Bearer ${token}` }, // Si le token est nécessaire
+        });
+
+        // Met à jour la liste des cours après suppression
         this.bookedCourses = this.bookedCourses.filter(
-          (course) => course.id !== courseId
+            (course) => course.id !== courseId
         );
 
         alert("Course has been deleted successfully!");
-      } catch (error) {
+    } catch (error) {
         console.error("Error deleting course:", error);
         alert("Failed to delete course. Please try again.");
-      }
-    },
+    }
+}
+
+,
   },
 };
 </script>
+
+
 
 <style scoped>
   * {
@@ -95,6 +155,16 @@ export default {
   }
 
   .course-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    width: 90%;
+    margin-left: 5%;
+  }
+
+  .food-monitoring-item {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 8px;

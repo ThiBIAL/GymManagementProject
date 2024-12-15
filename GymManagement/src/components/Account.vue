@@ -11,10 +11,10 @@
 
       <!-- Buttons -->
       <div class="buttons-container">
-        <button class="btn-view" @click="editProfile">Edit Profile</button>
-        <button class="btn-view" @click="viewReservations">View Reserved Classes</button>
-        <button class="btn-view" @click="viewDietPlan">View Diet Plan</button>
-        <button class="btn-logout" @click="logout">Logout</button>
+        <button class="btn-view" @click="editProfile"><strong>Edit Profile</strong></button>
+        <button class="btn-view" @click="viewReservations"><RouterLink to="/home">Reserved Classes</RouterLink></button>
+        <button class="btn-view" @click="viewDietPlan"><RouterLink to="/home">View Diet Plan</RouterLink></button>
+        <button class="btn-logout" @click="logout"><strong>Logout</strong></button>
       </div>
     </div>
 

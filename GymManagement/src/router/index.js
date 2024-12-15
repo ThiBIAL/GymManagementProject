@@ -8,6 +8,8 @@ import Subscription from '../components/Subscription.vue';
 import BookCourse from '../components/BookCourse.vue';
 import Member from '../components/Member.vue';
 import axios from '../config/axiosInstance';
+import AddCourses from '@/components/AddCourses.vue';
+import AddFoodMonitoring from '@/components/AddFoodMonitoring.vue';
 
 const routes = [
     { path: "/", component: Welcome, meta: { title: "Welcome to EasyFit" } },
