@@ -10,6 +10,28 @@
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
 
+            <!-- Menu déroulant spécifique au coach -->
+            <div
+        v-if="isCoach"
+        class="dropdown"
+        @mouseover="showCoachDropdown = true"
+        @mouseleave="showCoachDropdown = false"
+      >
+        <router-link to="/Account/:username">Coach</router-link>
+        <ul v-show="showCoachDropdown" class="dropdown-menu">
+          <li>
+            <router-link to="/AddCourses">Add Courses</router-link>
+          </li>
+          <li>
+            <router-link to="/AddFoodMonitoring">Add FoodMonitoring</router-link>
+          </li>
+          <li>
+            <router-link to="/CoachSchedule">Coach Schedule</router-link>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Menu déroulant pour le compte utilisateur -->
       <div
         v-if="isLoggedIn"
         class="dropdown"
@@ -45,60 +67,66 @@ export default {
     return {
       isLoggedIn: false,
       isAdmin: false,
+      isCoach: false,  // Ajouter un flag pour le rôle de coach
       showDropdown: false,
+      showCoachDropdown: false, // Propriété ajoutée pour afficher le menu déroulant du coach
     };
   },
   created() {
-    this.checkLoginState();
+    this.checkLoginState(); // Vérifie l'état de la connexion à la création du composant
   },
   methods: {
     async checkLoginState() {
       console.log('checkLoginState called');
       const token = localStorage.getItem('token');
+      
+      // Si aucun token n'est trouvé, l'utilisateur n'est pas connecté
       if (!token) {
         console.log('No token found in localStorage.');
         this.isLoggedIn = false;
         this.isAdmin = false;
+        this.isCoach = false; // Réinitialiser le statut coach
         return;
       }
 
       try {
+        // Validation du token auprès du backend
         const response = await axios.get('/auth/validate', {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log('Validation response:', response.data);
 
         const user = response.data.user;
+        
+        // Si les données utilisateur sont retournées
         if (user) {
           this.isLoggedIn = true;
           this.isAdmin = user.role === 'admin';
+          this.isCoach = user.role === 'coach'; // Mettre à jour le statut coach en fonction du rôle
           console.log('User is logged in:', user);
         } else {
           console.log('No user data returned from validation.');
-          this.logout();
+          this.logout(); // Si aucune donnée utilisateur n'est retournée, déconnecter l'utilisateur
         }
       } catch (error) {
         console.error('Error validating token:', error.response?.data || error.message);
-        this.logout();
+        this.logout(); // Déconnexion en cas d'erreur de validation
       }
     },
     async updateLoginState(loggedIn) {
       this.isLoggedIn = loggedIn;
-      await this.checkLoginState();
+      await this.checkLoginState(); // Rafraîchir l'état de connexion après modification
     },
     logout() {
-      localStorage.removeItem('token');
+      localStorage.removeItem('token'); // Retirer le token de localStorage
       this.isLoggedIn = false;
       this.isAdmin = false;
-      this.$router.push('/');
+      this.isCoach = false; // Réinitialiser le statut coach
+      this.$router.push('/'); // Rediriger vers la page d'accueil
     },
   },
 };
 </script>
-
-<style>
-/* Style identique */
-</style>
 
 
 <style>

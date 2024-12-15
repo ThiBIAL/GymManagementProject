@@ -28,60 +28,85 @@
 </template>
 
 <script>
+
+function decodeToken(token) {
+  const payload = token.split('.')[1]; // Extraire la partie payload du token
+  const decodedPayload = JSON.parse(atob(payload)); // Décoder le payload (Base64)
+  return decodedPayload;
+}
+
+
 import axios from '../config/axiosInstance';
 
 export default {
   data() {
     return {
-      courses: [], // Courses from the database
-      selectedCourse: null,
+      courses: [], // Store available courses
+      selectedCourse: null, // Store the course that the user wants to book
     };
   },
   mounted() {
-    this.fetchCourses();
+    this.fetchCourses(); // Fetch courses when the component is mounted
   },
   methods: {
+    // Fetch courses from the backend
     async fetchCourses() {
       try {
         const response = await axios.get('/courses');
-        this.courses = response.data;
+        this.courses = response.data; // Update the courses data
       } catch (error) {
         console.error('Error fetching courses:', error);
         alert('An error occurred while fetching courses.');
       }
     },
+
+    // Set the selected course when the user clicks "Book Now"
     bookCourse(course) {
-      this.selectedCourse = course;
+      this.selectedCourse = course; // Store the selected course
     },
+
+    // Confirm the booking and send the request to the backend
     async confirmBooking() {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert('You need to be logged in to book a course.');
-          return this.$router.push('/SignIn');
-        }
+  try {
+    const token = localStorage.getItem('token'); // Récupérer le token depuis le localStorage
+    if (!token) {
+      alert('You need to be logged in to book a course.');
+      return this.$router.push('/SignIn'); // Rediriger vers la page de connexion si non connecté
+    }
 
-        await axios.post(
-          `/courses/book/${this.selectedCourse.id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    // Décoder le token JWT manuellement
+    const decodedToken = decodeToken(token);
+    const username = decodedToken.username; // Extraire l'username du token décodé
 
-        alert(`You have successfully booked the ${this.selectedCourse.courseName}!`);
-        this.selectedCourse = null;
-        this.fetchCourses();
-      } catch (error) {
-        console.error('Error booking course:', error);
-        alert('An error occurred while booking the course.');
+    // Vérifier si l'username existe dans le token
+    if (!username) {
+      alert('User information is missing.');
+      return;
+    }
+
+    // Envoyer la requête avec le token d'autorisation et l'username
+    await axios.post(
+      `/courses/book/${this.selectedCourse.id}`,
+      { username: username }, // Ajouter le username dans la requête
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Ajouter le token dans l'en-tête Authorization
+        },
       }
-    },
+    );
+
+    alert(`You have successfully booked the ${this.selectedCourse.courseName}!`);
+    this.selectedCourse = null;
+    this.fetchCourses(); // Rafraîchir la liste des cours après la réservation
+  } catch (error) {
+    console.error('Error booking course:', error);
+    alert('An error occurred while booking the course.');
+  }
+},
   },
 };
 </script>
+
 
 <style scoped>
 .book-course {

@@ -10,6 +10,9 @@ import memberRoutes from './routes/members.js';
 import courseRoutes from './routes/courses.js';
 import subscriptionTypeRoutes from './routes/subscriptionTypes.js';
 import userSubscriptionRoutes from './routes/userSubscriptions.js';
+import foodMonitoringRoutes from './routes/FoodMonitoring.js';
+import './models/association.js';
+
 
 // Initialize Express app
 const app = express();
@@ -57,6 +60,7 @@ app.use('/api/members', memberRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/subscription-types', subscriptionTypeRoutes);
 app.use('/api/user-subscriptions', userSubscriptionRoutes);
+app.use('/api/food-monitoring', foodMonitoringRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

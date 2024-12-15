@@ -8,6 +8,8 @@ import Subscription from '../components/Subscription.vue';
 import BookCourse from '../components/BookCourse.vue';
 import Member from '../components/Member.vue';
 import axios from '../config/axiosInstance';
+import AddCourses from '@/components/AddCourses.vue';
+import AddFoodMonitoring from '@/components/AddFoodMonitoring.vue';
 
 const routes = [
     { path: "/", component: Welcome, meta: { title: "Welcome to EasyFit" } },
@@ -18,6 +20,8 @@ const routes = [
     { path: "/BookCourse", component: BookCourse, meta: { title: "Book a Course - EasyFit" } },
     { path: "/Member", component: Member, meta: { title: "Manage Members - EasyFit" } },
     { path: "/Subscription", component: Subscription, meta: { title: "Subscription - EasyFit" } },
+    { path:"/AddCourses",component:AddCourses},
+    { path:"/AddFoodMonitoring", component:AddFoodMonitoring},
   ];  
 
 const router = createRouter({
