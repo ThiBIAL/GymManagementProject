@@ -62,7 +62,6 @@ export default {
         lastName: '',
         email: '',
         phone: '',
-        address: '',
       },
       password: '', // Stores the new password to be updated
     };
@@ -92,10 +91,20 @@ export default {
     async saveChanges() {
       try {
         const token = localStorage.getItem('token');
-        // Utilise l'ID de l'utilisateur pour envoyer la requête PUT
-        await axios.put(`/members/${this.user.id}`, this.user, {
+        const updatedData = {
+          ...this.user,
+        };
+
+        // Include the password only if it is provided
+        if (this.password) {
+          updatedData.password = this.password;
+        }
+
+        await axios.put(`/members/${this.user.id}`, updatedData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        alert('Profile updated successfully!');
         this.closeModal();
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -114,7 +123,7 @@ export default {
     },
   },
 };
-</script>
+</script> 
 
 <style scoped>
 #content {

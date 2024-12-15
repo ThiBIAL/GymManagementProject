@@ -11,13 +11,13 @@ import axios from '../config/axiosInstance';
 
 const routes = [
     { path: "/", component: Welcome, meta: { title: "Welcome to EasyFit" } },
-    { path: "/Home", component: Home, meta: { title: "Home - EasyFit" } },
+    { path: "/Home", component: Home, meta: { requiresAuth: true, title: "Home - EasyFit" } },
     { path: "/SignIn", component: SignIn, meta: { title: "Sign In - EasyFit" } },
     { path: "/SignUp", component: SignUp, meta: { title: "Sign Up - EasyFit" } },
-    { path: "/Account/:username", component: Account, meta: { title: "Account - EasyFit" } },
-    { path: "/BookCourse", component: BookCourse, meta: { title: "Book a Course - EasyFit" } },
-    { path: "/Member", component: Member, meta: { title: "Manage Members - EasyFit" } },
-    { path: "/Subscription", component: Subscription, meta: { title: "Subscription - EasyFit" } },
+    { path: "/Account/:username", component: Account, meta: { requiresAuth: true, title: "Account - EasyFit" } },
+    { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true, title: "Book a Course - EasyFit" } },
+    { path: "/Member", component: Member, meta: { requiresAdmin: true, title: "Manage Members - EasyFit" } },
+    { path: "/Subscription", component: Subscription, meta: { requiresAuth: true, title: "Subscription - EasyFit" } },
   ];  
 
 const router = createRouter({
@@ -28,11 +28,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const token = localStorage.getItem('token');
 
+    // Mise à jour du titre de la page
     if (to.meta.title) {
         document.title = to.meta.title;
-      }
-    next();
+    }
 
+    // Vérifie si l'accès nécessite une authentification
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (!token) {
             alert('You need to be logged in to access this page');
@@ -43,10 +44,11 @@ router.beforeEach(async (to, from, next) => {
             const response = await axios.get('/auth/validate', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            const user = response.data.user; // Corrected to access user object
+            const user = response.data.user;
 
             console.log('Authenticated user:', user);
 
+            // Redirection si l'utilisateur tente d'accéder à un compte qui n'est pas le sien
             if (to.name === 'Account' && to.params.username !== user.username) {
                 return next(`/Account/${user.username}`);
             }
@@ -58,7 +60,10 @@ router.beforeEach(async (to, from, next) => {
             localStorage.removeItem('token');
             return next('/SignIn');
         }
-    } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+    }
+
+    // Vérifie si l'accès nécessite un rôle administrateur
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
         if (!token) {
             alert('Access reserved to administrators');
             return next('/');
@@ -68,13 +73,13 @@ router.beforeEach(async (to, from, next) => {
             const response = await axios.get('/auth/validate', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            const user = response.data.user; // Corrected to access user object
+            const user = response.data.user;
 
             console.log('Authorization check:', user);
 
             if (user.role !== 'admin') {
                 alert('Access reserved to administrators');
-                return next('/');
+                return next('/'); // Retourne à la page d'accueil
             }
 
             next();
@@ -84,10 +89,12 @@ router.beforeEach(async (to, from, next) => {
             localStorage.removeItem('token');
             return next('/SignIn');
         }
-    } else {
-        next();
     }
+
+    // Si aucune restriction n'est définie, poursuivre la navigation
+    next();
 });
+
 
 
 

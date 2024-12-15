@@ -1,8 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import User from './User.js';
-import SubscriptionType from './SubscriptionType.js';
-
 
 const UserSubscription = sequelize.define('UserSubscription', {
     id: {
@@ -14,7 +11,7 @@ const UserSubscription = sequelize.define('UserSubscription', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: 'Users',
             key: 'id',
         },
     },
@@ -22,7 +19,15 @@ const UserSubscription = sequelize.define('UserSubscription', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: SubscriptionType,
+            model: 'SubscriptionTypes',
+            key: 'id',
+        },
+    },
+    courseId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'Courses',
             key: 'id',
         },
     },

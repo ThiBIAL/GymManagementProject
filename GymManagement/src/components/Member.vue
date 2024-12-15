@@ -1,8 +1,17 @@
 <template>
   <div id="content">
-    <h1>Manage Member</h1>
+    <div class="header">
+      <h1>Manage Member</h1>
+      <input 
+        type="text" 
+        v-model="searchQuery" 
+        @input="filterUsers" 
+        placeholder="Search users..." 
+        class="search-bar" 
+      />
+    </div>
     <div class="user" v-if="admins.length">
-      <h2 class="subTitle">Admins:</h2>
+      <h2 class="subTitle">Admins ({{ admins.length }}):</h2>
       <ul>
         <li v-for="user in admins" :key="user.id" class="admin">
           {{ user.username }}
@@ -13,12 +22,13 @@
               <option value="member">Member</option>
             </select>
             <button @click="viewUserDetails(user)" class="infoButton">Info</button>
+            <button @click="deleteUser(user)" class="deleteButton">Delete</button>
           </div>
         </li>
       </ul>
     </div>
     <div class="user" v-if="coaches.length">
-      <h2 class="subTitle">Coaches:</h2>
+      <h2 class="subTitle">Coaches ({{ coaches.length }}):</h2>
       <ul>
         <li v-for="user in coaches" :key="user.id" class="coach">
           {{ user.username }}
@@ -29,12 +39,13 @@
               <option value="member">Member</option>
             </select>
             <button @click="viewUserDetails(user)" class="infoButton">Info</button>
+            <button @click="deleteUser(user)" class="deleteButton">Delete</button>
           </div>
         </li>
       </ul>
     </div>
     <div class="user" v-if="members.length">
-      <h2 class="subTitle">Members:</h2>
+      <h2 class="subTitle">Members ({{ members.length }}):</h2>
       <ul>
         <li v-for="user in members" :key="user.id" class="member">
           {{ user.username }}
@@ -45,6 +56,7 @@
               <option value="member">Member</option>
             </select>
             <button @click="viewUserDetails(user)" class="infoButton">Info</button>
+            <button @click="deleteUser(user)" class="deleteButton">Delete</button>
           </div>
         </li>
       </ul>
@@ -86,11 +98,13 @@ export default {
       admins: [],
       coaches: [],
       members: [],
+      filteredUsers: [],
       showModal: false,
       showUserInfoModal: false,
       selectedUser: null,
       userDetails: {},
       tempRole: '',
+      searchQuery: '',
     };
   },
   created() {
@@ -101,6 +115,7 @@ export default {
       try {
         const response = await axios.get('/members');
         this.users = response.data;
+        this.filteredUsers = this.users;
         this.sortUsers();
       } catch (error) {
         console.error('Error fetching users:', error.response?.data || error.message);
@@ -108,9 +123,9 @@ export default {
       }
     },
     sortUsers() {
-      this.admins = this.users.filter((user) => user.role === 'admin');
-      this.coaches = this.users.filter((user) => user.role === 'coach');
-      this.members = this.users.filter((user) => user.role === 'member');
+      this.admins = this.filteredUsers.filter((user) => user.role === 'admin');
+      this.coaches = this.filteredUsers.filter((user) => user.role === 'coach');
+      this.members = this.filteredUsers.filter((user) => user.role === 'member');
     },
     updateUserRole(user, event) {
       this.selectedUser = user;
@@ -137,19 +152,38 @@ export default {
       this.tempRole = '';
       this.showModal = false;
     },
+    async deleteUser(user) {
+      if (confirm(`Are you sure you want to delete ${user.username}?`)) {
+        try {
+          await axios.delete(`/members/${user.id}`);
+          this.users = this.users.filter((u) => u.id !== user.id);
+          this.filterUsers();
+        } catch (error) {
+          console.error('Error deleting user:', error.response?.data || error.message);
+          alert('Failed to delete user. Please try again.');
+        }
+      }
+    },
+    filterUsers() {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredUsers = this.users.filter((user) =>
+        user.username.toLowerCase().startsWith(query)
+      );
+      this.sortUsers();
+    },
     viewUserDetails(user) {
       this.selectedUser = user;
-      this.userDetails = { ...user }; // Clone user details
+      this.userDetails = { ...user };
       delete this.userDetails.password;
       delete this.userDetails.id;
       delete this.userDetails.createdAt;
-      delete this.userDetails.updatedAt; // Remove the password field
+      delete this.userDetails.updatedAt;
       this.showUserInfoModal = true;
     },
     formatKey(key) {
       return key
-        .replace(/([A-Z])/g, ' $1') // Add a space before capital letters
-        .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, (str) => str.toUpperCase());
     },
     closeModal() {
       this.selectedUser = null;
@@ -191,6 +225,22 @@ h1 {
   text-align: left;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+.search-bar {
+  width: 300px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 ul {
@@ -255,6 +305,22 @@ select {
 
 .infoButton:hover {
   background-color: #0056b3;
+}
+
+.deleteButton {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ff0000;
+  background-color: #ff4d4d;
+  color: #fff;
+  cursor: pointer;
+  height: 35px;
+  width: 60px;
+  font-size: 15px;
+}
+
+.deleteButton:hover {
+  background-color: #cc0000;
 }
 
 .modal-overlay {
