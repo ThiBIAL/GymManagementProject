@@ -1,6 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 import UserSubscription from './UserSubscription.js';
+import Course from './Course.js';
 
 const User = sequelize.define('User', {
     id: {
@@ -49,5 +50,8 @@ const User = sequelize.define('User', {
 // Associations
 User.hasMany(UserSubscription, { foreignKey: 'userId', as: 'subscriptions' });
 UserSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+User.belongsToMany(Course, { through: 'UserCourses', foreignKey: 'UserId' });
+Course.belongsToMany(User, { through: 'UserCourses', foreignKey: 'CourseId' });
 
 export default User;

@@ -67,42 +67,39 @@ export default {
 
     // Confirm the booking and send the request to the backend
     async confirmBooking() {
-  try {
-    const token = localStorage.getItem('token'); // Récupérer le token depuis le localStorage
-    if (!token) {
-      alert('You need to be logged in to book a course.');
-      return this.$router.push('/SignIn'); // Rediriger vers la page de connexion si non connecté
-    }
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          alert('You need to log in to book a course.');
+          return this.$router.push('/SignIn');
+        }
 
-    // Décoder le token JWT manuellement
-    const decodedToken = decodeToken(token);
-    const username = decodedToken.username; // Extraire l'username du token décodé
+        const decodedToken = decodeToken(token);
+        const username = decodedToken.username;
 
-    // Vérifier si l'username existe dans le token
-    if (!username) {
-      alert('User information is missing.');
-      return;
-    }
+        if (!username) {
+          alert('User information is missing.');
+          return;
+        }
 
-    // Envoyer la requête avec le token d'autorisation et l'username
-    await axios.post(
-      `/courses/book/${this.selectedCourse.id}`,
-      { username: username }, // Ajouter le username dans la requête
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Ajouter le token dans l'en-tête Authorization
-        },
+        await axios.post(
+          `/courses/book/${this.selectedCourse.id}`,
+          { username },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        alert(`You have successfully booked ${this.selectedCourse.courseName}!`);
+        this.selectedCourse = null;
+        this.fetchCourses();
+      } catch (error) {
+        console.error('Error booking course:', error);
+        alert('An error occurred while booking the course.');
       }
-    );
-
-    alert(`You have successfully booked the ${this.selectedCourse.courseName}!`);
-    this.selectedCourse = null;
-    this.fetchCourses(); // Rafraîchir la liste des cours après la réservation
-  } catch (error) {
-    console.error('Error booking course:', error);
-    alert('An error occurred while booking the course.');
-  }
-},
+    },
   },
 };
 </script>

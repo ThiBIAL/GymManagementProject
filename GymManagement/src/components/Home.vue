@@ -49,7 +49,7 @@ export default {
       const response = await axios.get('/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      this.username = response.data.user.username; // Retrieve the username
+      this.username = response.data.user.username;
 
       // Fetch the booked courses
       await this.fetchBookedCourses();
@@ -71,10 +71,7 @@ export default {
         const response = await axios.get(`/courses/booked/${this.username}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.bookedCourses = response.data; // Update booked courses
-
-        console.log("Booked courses:", this.bookedCourses); // Debugging: Check the response structure
-
+        this.bookedCourses = response.data;
       } catch (error) {
         console.error('Error fetching booked courses:', error);
         alert('Failed to load booked courses.');
@@ -88,7 +85,7 @@ export default {
         const response = await axios.get(`/food-monitoring/${this.username}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.foodMonitoring = response.data; // Update food monitoring data
+        this.foodMonitoring = response.data;
       } catch (error) {
         console.error('Error fetching food monitoring data:', error);
       }
@@ -96,42 +93,37 @@ export default {
 
     // Delete a course
     async deleteCourse(courseId) {
-    try {
+      try {
         if (!courseId) {
-            console.error("Course ID is missing.");
-            alert("Course ID is missing.");
-            return;
+          alert("Course ID is missing.");
+          return;
         }
 
-        const token = localStorage.getItem("token"); // Si vous utilisez un token
-        const response = await axios.delete(`/courses/${courseId}`, {
-            headers: { Authorization: `Bearer ${token}` }, // Si le token est nécessaire
+        const token = localStorage.getItem("token");
+
+        // Use DELETE with username in the body
+        await axios.delete(`/courses/book/${courseId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { username: this.username }, // Pass the username in the body
         });
 
-        // Met à jour la liste des cours après suppression
+        // Update the booked courses list
         this.bookedCourses = this.bookedCourses.filter(
-            (course) => course.id !== courseId
+          (course) => course.id !== courseId
         );
 
         alert("Course has been deleted successfully!");
-    } catch (error) {
-        console.error("Error deleting course:", error);
+      } catch (error) {
+        console.error("Error deleting course:", error.response?.data || error.message);
         alert("Failed to delete course. Please try again.");
-    }
-}
-
-,
+      }
+    },
   },
 };
 </script>
 
-
-
 <style scoped>
-  * {
-    box-sizing: border-box;
-  }
-
+  /* Styles remain unchanged */
   #content > * {
     color: #333333;
     text-align: center;

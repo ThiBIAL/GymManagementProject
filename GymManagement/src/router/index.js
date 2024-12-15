@@ -10,6 +10,7 @@ import Member from '../components/Member.vue';
 import axios from '../config/axiosInstance';
 import AddCourses from '@/components/AddCourses.vue';
 import AddFoodMonitoring from '@/components/AddFoodMonitoring.vue';
+import CoachSchedule from '@/components/CoachSchedule.vue';
 
 const routes = [
     { path: "/", component: Welcome, meta: { title: "Welcome to EasyFit" } },
@@ -20,6 +21,9 @@ const routes = [
     { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true, title: "Book a Course - EasyFit" } },
     { path: "/Member", component: Member, meta: { requiresAdmin: true, title: "Manage Members - EasyFit" } },
     { path: "/Subscription", component: Subscription, meta: { requiresAuth: true, title: "Subscription - EasyFit" } },
+    { path:"/AddCourses",component:AddCourses, meta: { requiresCoach: true, title: "Add Courses - EasyFit" }},
+    { path:"/AddFoodMonitoring", component:AddFoodMonitoring, meta: { requiresCoach: true, title: "Add food Monitoring - EasyFit" }},
+    { path:"/CoachSchedule", component:CoachSchedule, meta: { requiresCoach: true, title: "Coach Schedule - EasyFit" }},
   ];  
 
 const router = createRouter({
@@ -93,11 +97,37 @@ router.beforeEach(async (to, from, next) => {
         }
     }
 
+    // Vérifie si l'accès nécessite un rôle coach
+    if (to.matched.some(record => record.meta.requiresCoach)) {
+        if (!token) {
+            alert('Access reserved to coaches');
+            return next('/');
+        }
+
+        try {
+            const response = await axios.get('/auth/validate', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const user = response.data.user;
+
+            console.log('Authorization check for coach:', user);
+
+            if (user.role !== 'coach') {
+                alert('Access reserved to coaches');
+                return next('/'); // Retourne à la page d'accueil
+            }
+
+            next();
+        } catch (error) {
+            console.error('Authorization error:', error);
+            alert('Session expired or unauthorized access.');
+            localStorage.removeItem('token');
+            return next('/SignIn');
+        }
+    }
+
     // Si aucune restriction n'est définie, poursuivre la navigation
     next();
 });
-
-
-
 
 export default router;
