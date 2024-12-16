@@ -4,12 +4,18 @@ import Course from './Course.js';
 import SubscriptionType from './SubscriptionType.js';
 import UserSubscription from './UserSubscription.js';
 
-// Définir les relations entre modèles
+// Configurer les relations entre les modèles
 User.hasMany(UserSubscription, { foreignKey: 'userId' });
 UserSubscription.belongsTo(User, { foreignKey: 'userId' });
 
-SubscriptionType.hasMany(UserSubscription, { foreignKey: 'subscriptionTypeId' });
-UserSubscription.belongsTo(SubscriptionType, { foreignKey: 'subscriptionTypeId' });
+SubscriptionType.hasMany(UserSubscription, { 
+    foreignKey: 'subscriptionTypeId',
+    as: 'userSubscriptions', // Alias cohérent
+});
+UserSubscription.belongsTo(SubscriptionType, { 
+    foreignKey: 'subscriptionTypeId',
+    as: 'subscriptionType', // Alias pour la relation inverse
+});
 
 Course.hasMany(UserSubscription, { foreignKey: 'courseId' });
 UserSubscription.belongsTo(Course, { foreignKey: 'courseId' });

@@ -49,7 +49,7 @@ export default {
       const response = await axios.get('/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      this.username = response.data.user.username; // Retrieve the username
+      this.username = response.data.user.username;
 
       // Fetch the booked courses
       await this.fetchBookedCourses();
@@ -66,20 +66,17 @@ export default {
   methods: {
     // Fetch booked courses
     async fetchBookedCourses() {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`/courses/booked/${this.username}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    console.log("Booked Courses Response:", response.data);  // Log de la réponse de l'API
-
-    this.bookedCourses = response.data; // Met à jour les cours réservés
-  } catch (error) {
-    console.error('Error fetching booked courses:', error);
-    alert('Failed to load booked courses.');
-  }
-},
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/courses/booked/${this.username}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.bookedCourses = response.data;
+      } catch (error) {
+        console.error('Error fetching booked courses:', error);
+        alert('Failed to load booked courses.');
+      }
+    },
 
     // Fetch food monitoring data
     async fetchFoodMonitoring() {
@@ -88,7 +85,7 @@ export default {
         const response = await axios.get(`/food-monitoring/${this.username}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.foodMonitoring = response.data; // Update food monitoring data
+        this.foodMonitoring = response.data;
       } catch (error) {
         console.error('Error fetching food monitoring data:', error);
       }
@@ -96,30 +93,37 @@ export default {
 
     // Delete a course
     async deleteCourse(courseId) {
+      try {
+        if (!courseId) {
+          alert("Course ID is missing.");
+          return;
+        }
 
-    try {
-        // Filtrer le cours localement sans appeler le backend
+        const token = localStorage.getItem("token");
+
+        // Use DELETE with username in the body
+        await axios.delete(`/courses/book/${courseId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { username: this.username }, // Pass the username in the body
+        });
+
+        // Update the booked courses list
         this.bookedCourses = this.bookedCourses.filter(
-            (course) => course.id !== courseId
+          (course) => course.id !== courseId
         );
-        alert("Course has been hidden successfully!");
-    } catch (error) {
-        console.error("Error hiding course:", error);
-        alert("Failed to hide course. Please try again.");
-    }
-},
+
+        alert("Course has been deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting course:", error.response?.data || error.message);
+        alert("Failed to delete course. Please try again.");
+      }
+    },
   },
 };
 </script>
 
-
-
-
 <style scoped>
-  * {
-    box-sizing: border-box;
-  }
-
+  /* Styles remain unchanged */
   #content > * {
     color: #333333;
     text-align: center;

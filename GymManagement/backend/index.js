@@ -11,6 +11,7 @@ import courseRoutes from './routes/courses.js';
 import subscriptionTypeRoutes from './routes/subscriptionTypes.js';
 import userSubscriptionRoutes from './routes/userSubscriptions.js';
 import foodMonitoringRoutes from './routes/FoodMonitoring.js';
+import './models/associations.js';
 import './models/association.js';
 
 

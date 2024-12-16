@@ -2,6 +2,10 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import models from '../models/index.js';
+import multer from 'multer';
+import path from 'path';
+import authenticateToken from '../middleware/authenticateToken.js';
+
 
 const { User } = models;
 

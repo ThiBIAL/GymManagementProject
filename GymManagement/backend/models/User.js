@@ -1,5 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/database.js'; // Assurez-vous que ce chemin est correct
+import sequelize from '../config/database.js';
+import UserSubscription from './UserSubscription.js';
+import Course from './Course.js';
 
 const User = sequelize.define('User', {
     id: {
@@ -24,7 +26,6 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
-        unique: true,
     },
     phoneNumber: {
         type: DataTypes.STRING,
@@ -45,5 +46,12 @@ const User = sequelize.define('User', {
 }, {
     timestamps: true,
 });
+
+// Associations
+User.hasMany(UserSubscription, { foreignKey: 'userId', as: 'subscriptions' });
+UserSubscription.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+User.belongsToMany(Course, { through: 'UserCourses', foreignKey: 'UserId' });
+Course.belongsToMany(User, { through: 'UserCourses', foreignKey: 'CourseId' });
 
 export default User;
