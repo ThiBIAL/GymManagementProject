@@ -66,20 +66,20 @@ export default {
   methods: {
     // Fetch booked courses
     async fetchBookedCourses() {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`/courses/booked/${this.username}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.bookedCourses = response.data; // Update booked courses
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`/courses/booked/${this.username}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-        console.log("Booked courses:", this.bookedCourses); // Debugging: Check the response structure
+    console.log("Booked Courses Response:", response.data);  // Log de la réponse de l'API
 
-      } catch (error) {
-        console.error('Error fetching booked courses:', error);
-        alert('Failed to load booked courses.');
-      }
-    },
+    this.bookedCourses = response.data; // Met à jour les cours réservés
+  } catch (error) {
+    console.error('Error fetching booked courses:', error);
+    alert('Failed to load booked courses.');
+  }
+},
 
     // Fetch food monitoring data
     async fetchFoodMonitoring() {
@@ -96,34 +96,22 @@ export default {
 
     // Delete a course
     async deleteCourse(courseId) {
+
     try {
-        if (!courseId) {
-            console.error("Course ID is missing.");
-            alert("Course ID is missing.");
-            return;
-        }
-
-        const token = localStorage.getItem("token"); // Si vous utilisez un token
-        const response = await axios.delete(`/courses/${courseId}`, {
-            headers: { Authorization: `Bearer ${token}` }, // Si le token est nécessaire
-        });
-
-        // Met à jour la liste des cours après suppression
+        // Filtrer le cours localement sans appeler le backend
         this.bookedCourses = this.bookedCourses.filter(
             (course) => course.id !== courseId
         );
-
-        alert("Course has been deleted successfully!");
+        alert("Course has been hidden successfully!");
     } catch (error) {
-        console.error("Error deleting course:", error);
-        alert("Failed to delete course. Please try again.");
+        console.error("Error hiding course:", error);
+        alert("Failed to hide course. Please try again.");
     }
-}
-
-,
+},
   },
 };
 </script>
+
 
 
 
