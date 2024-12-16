@@ -13,7 +13,7 @@
       <div class="buttons-container">
         <button class="btn-view" @click="editProfile"><strong>Edit Profile</strong></button>
         <button class="btn-view" @click="viewReservations"><RouterLink to="/home">Reserved Classes</RouterLink></button>
-        <button class="btn-view" @click="viewDietPlan"><RouterLink to="/home">View Diet Plan</RouterLink></button>
+        <button class="btn-view" @click="viewDietPlan"><strong>View Diet Plan</strong></button>
         <button class="btn-logout" @click="logout"><strong>Logout</strong></button>
       </div>
     </div>
@@ -45,8 +45,24 @@
         </form>
       </div>
     </div>
+
+    <!-- Diet Plan Popup -->
+    <div v-if="isDietPlanVisible" class="diet-plan-overlay" @click="closeDietPlan">
+      <div class="diet-plan-popup" @click.stop>
+        <h3>Select a Diet Plan</h3>
+        <ul>
+          <li><button @click="selectDietPlan('Mass Gain')">Mass Gain</button></li>
+          <li><button @click="selectDietPlan('Weight Loss')">Weight Loss</button></li>
+          <li><button @click="selectDietPlan('Maintenance')">Maintenance</button></li>
+        </ul>
+        <div class="modal-actions">
+          <button @click="closeDietPlan">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
 
 <script>
 import axios from '../config/axiosInstance';
@@ -55,6 +71,7 @@ export default {
   data() {
     return {
       isModalVisible: false,
+      isDietPlanVisible: false,
       profilePicture: '/avatar/avatar1.jpg', // Default profile picture path
       user: {
         username: '',
@@ -119,11 +136,19 @@ export default {
       console.log('View reservations');
     },
     viewDietPlan() {
-      console.log('View diet plan');
+      this.isDietPlanVisible = true; // Show the diet plan popup
     },
+    closeDietPlan() {
+      this.isDietPlanVisible = false; // Hide the diet plan popup
+    },
+    selectDietPlan(plan) {
+      console.log(`Selected diet plan: ${plan}`);
+      this.closeDietPlan(); // Close the popup after selection
+    }
   },
 };
 </script> 
+
 
 <style scoped>
 #content {
@@ -254,4 +279,69 @@ button {
   background-color: #4CAF50;
   color: white;
 }
+
+.diet-plan-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.diet-plan-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+}
+
+.diet-plan-popup h3 {
+  margin-bottom: 20px;
+}
+
+.diet-plan-popup ul {
+  list-style: none;
+  padding: 0;
+}
+
+.diet-plan-popup li {
+  margin: 10px 0;
+}
+
+.diet-plan-popup button {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #333;
+  color: #fff;
+}
+
+.diet-plan-popup button:hover {
+  background-color: #555;
+}
+
+.modal-actions button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #ccc;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
 </style>

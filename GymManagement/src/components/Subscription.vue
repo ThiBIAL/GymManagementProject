@@ -10,11 +10,29 @@
       </div>
     </div>
 
-    <!-- Modal for Payment Information -->
+    <!-- Modal for Payment Options -->
     <div v-if="showPaymentModal" class="modal">
       <div class="modal-content">
+        <h2>Choose Payment Method</h2>
+        <div class="payment-options">
+          <button @click="payWithCash" class="payment-button cash">
+            💵 Pay with Cash
+          </button>
+          <button @click="payWithCard" class="payment-button card">
+            💳 Pay with Card
+          </button>
+          <button @click="payWithBankTransfer" class="payment-button transfer">
+            🏦 Bank Transfer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Card Payment -->
+    <div v-if="showCardPaymentModal" class="modal">
+      <div class="modal-content">
         <h2>Enter Payment Information</h2>
-        <form @submit.prevent="processPayment">
+        <form @submit.prevent="processCardPayment">
           <div>
             <label>Card Number</label>
             <input v-model="cardNumber" type="text" placeholder="Card Number" required />
@@ -29,9 +47,34 @@
           </div>
           <div class="modal-buttons">
             <button type="submit" :disabled="!isPaymentValid">Confirm Payment</button>
-            <button @click="closePaymentModal">Cancel</button>
+            <button @click="closeCardPaymentModal">Cancel</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal for Bank Transfer -->
+    <div v-if="showBankTransferModal" class="modal">
+      <div class="modal-content">
+        <h2>Bank Transfer Details</h2>
+        <p>Please transfer the subscription fee to the following account:</p>
+        <p><strong>Account Name:</strong> FitnessGym</p>
+        <p><strong>IBAN:</strong> FR76 1234 5678 9012 3456 7890 123</p>
+        <p><strong>BIC:</strong> ABCD1234</p>
+        <div class="modal-buttons">
+          <button @click="confirmBankTransfer">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Cash Payment -->
+    <div v-if="showCashPaymentModal" class="modal">
+      <div class="modal-content">
+        <h2>Pay with Cash</h2>
+        <p>Subscription confirmed successfully!</p>
+        <div class="modal-buttons">
+          <button @click="confirmCashPayment">OK</button>
+        </div>
       </div>
     </div>
   </div>
@@ -43,8 +86,11 @@ import axios from '../config/axiosInstance';
 export default {
   data() {
     return {
-      subscriptions: [], // Subscriptions fetched from the database
+      subscriptions: [],
       showPaymentModal: false,
+      showCardPaymentModal: false,
+      showBankTransferModal: false,
+      showCashPaymentModal: false,
       selectedSubscription: null,
       cardNumber: '',
       expiryDate: '',
@@ -77,7 +123,55 @@ export default {
       this.selectedSubscription = option;
       this.showPaymentModal = true;
     },
-    async processPayment() {
+    payWithCash() {
+      this.showPaymentModal = false;
+      this.showCashPaymentModal = true;
+    },
+    async confirmCashPayment() {
+      try {
+        await this.finalizeSubscription();
+        alert('Subscription confirmed successfully!');
+        this.showCashPaymentModal = false;
+      } catch (error) {
+        console.error('Error confirming subscription:', error.response || error.message);
+        alert('An error occurred while confirming the subscription.');
+      }
+    },
+    payWithCard() {
+      this.showPaymentModal = false;
+      this.showCardPaymentModal = true;
+    },
+    async processCardPayment() {
+      try {
+        await this.finalizeSubscription();
+        alert('Subscription confirmed successfully!');
+        this.closeCardPaymentModal();
+      } catch (error) {
+        console.error('Error confirming subscription:', error.response || error.message);
+        alert('An error occurred while confirming the subscription.');
+      }
+    },
+    closeCardPaymentModal() {
+      this.showCardPaymentModal = false;
+      this.cardNumber = '';
+      this.expiryDate = '';
+      this.cvc = '';
+    },
+    payWithBankTransfer() {
+      this.showPaymentModal = false;
+      this.showBankTransferModal = true;
+    },
+    async confirmBankTransfer() {
+      try {
+        await this.finalizeSubscription();
+        alert('Subscription confirmed successfully!');
+        this.showBankTransferModal = false;
+      } catch (error) {
+        console.error('Error confirming subscription:', error.response || error.message);
+        alert('An error occurred while confirming the subscription.');
+      }
+    },
+    async finalizeSubscription() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -101,22 +195,9 @@ export default {
             },
           }
         );
-
-        alert('Subscription confirmed successfully!');
-        this.showPaymentModal = false;
-        this.cardNumber = '';
-        this.expiryDate = '';
-        this.cvc = '';
       } catch (error) {
-        console.error('Error confirming subscription:', error.response || error.message);
-        alert('An error occurred while confirming the subscription.');
+        throw error;
       }
-    },
-    closePaymentModal() {
-      this.showPaymentModal = false;
-      this.cardNumber = '';
-      this.expiryDate = '';
-      this.cvc = '';
     },
   },
 };
@@ -226,6 +307,31 @@ export default {
   color: #333;
 }
 
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  font-size: 1.1rem;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.payment-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 .modal-buttons {
   margin-top: 20px;
 }
@@ -245,4 +351,78 @@ export default {
 .modal-buttons button:hover:not(:disabled) {
   background-color: #ffa500;
 }
+.payment-button.cash {
+  background-color: #2ecc71;
+}
+.payment-button.card {
+  background-color: #3498db;
+}
+.payment-button.transfer {
+  background-color: #f39c12;
+}
+
+.modal-content label {
+  display: block;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.modal-content input:focus {
+  border-color: #3498db;
+}
+
+.modal-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-buttons button {
+  padding: 12px 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.modal-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.modal-buttons button:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+.modal-buttons button[type="submit"] {
+  background-color: #3498db;
+}
+
+.modal-buttons button[type="submit"]:hover {
+  background-color: #308cc9;
+}
+
+.modal-buttons button.cancel {
+  background-color: #e74c3c;
+}
+
+.modal-buttons button.cancel:hover {
+  background-color: #c0392b;
+}
+
 </style>
