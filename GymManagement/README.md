@@ -1,29 +1,31 @@
 # GymManagement
 
-This template should help get you started developing with Vue 3 in Vite.
+Follow this README to acces to the website 
 
-## Recommended IDE Setup
+# First Step 
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Put your password of SQL in the file 'database.js' in the line 3. This file is ./backend/config/database.js
 
-## Customize configuration
+# Second Step 
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Create the database 'gym_db' in SQL to acces to the database with the line : 'CREATE DATABASE gym_db;'
 
-## Project Setup
+# Thrid Step 
 
-```sh
-npm install
-```
+Install the depencies and the package (if you don't have it) to be able to acces to the website : 
+'npm install express'
+'npm install express bcrypt sequelize mysql2 body-parser cors'
+'npm install multer'
+...
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+# Final Step 
+    1. Open VS-terminal or CMD-terminal and tape 
+        'cd .\GymManagement\backend\'
+        'node index.js'
+        Go in the backend file to launch the backend. 
+    2. Open an other VS-terminal or CMD-terminal and tape
+        'cd .\GymManagement\'
+        'npm run serve'
+        To launch in the server
+    3. You should have a link to the website :
+        'Local:   http://localhost:8081/ '
