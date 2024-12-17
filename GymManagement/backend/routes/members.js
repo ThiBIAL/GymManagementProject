@@ -3,6 +3,11 @@ import User from '../models/User.js';
 import authenticateToken from '../middleware/authenticateToken.js';
 import bcrypt from 'bcryptjs';
 
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
 const router = express.Router();
 
 // Récupérer tous les utilisateurs (protection ajoutée)
@@ -66,5 +71,32 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+//Avatar
+// Configuration de multer pour les uploads d'images
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/avatar'); // Dossier où les fichiers seront enregistrés
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
+});
+
+const upload = multer({ 
+    storage,
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+
+        if (extname && mimetype) {
+            return cb(null, true);
+        } else {
+            cb('Error: Only images are allowed');
+        }
+    },
+});
+
 
 export default router;

@@ -43,6 +43,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         defaultValue: null,
     },
+    profilePicture: {
+        type: DataTypes.STRING,
+        defaultValue: '/avatar/default-avatar.png', // Chemin par défaut
+    },
 }, {
     timestamps: true,
 });

@@ -17,7 +17,7 @@ const routes = [
     { path: "/Home", component: Home, meta: { requiresAuth: true, title: "Home - EasyFit" } },
     { path: "/SignIn", component: SignIn, meta: { title: "Sign In - EasyFit" } },
     { path: "/SignUp", component: SignUp, meta: { title: "Sign Up - EasyFit" } },
-    { path: "/Account/:username", component: Account, meta: { requiresAuth: true, title: "Account - EasyFit" } },
+    { path: "/Account/:username", name: "Account", component: Account, meta: { requiresAuth: true, title: "Account - EasyFit" } },
     { path: "/BookCourse", component: BookCourse, meta: { requiresAuth: true, title: "Book a Course - EasyFit" } },
     { path: "/Member", component: Member, meta: { requiresAdmin: true, title: "Manage Members - EasyFit" } },
     { path: "/Subscription", component: Subscription, meta: { requiresAuth: true, title: "Subscription - EasyFit" } },

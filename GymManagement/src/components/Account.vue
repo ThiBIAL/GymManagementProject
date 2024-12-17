@@ -1,8 +1,8 @@
 <template>
   <div id="content">
     <div class="profile-container">
-      <!-- Profile Picture -->
-      <div class="profile-picture">
+      <!-- Photo de profil -->
+      <div class="profile-picture" @click="openAvatarModal">
         <img :src="profilePicture" alt="Profile Picture" />
       </div>
 
@@ -18,7 +18,27 @@
       </div>
     </div>
 
-    <!-- Modal for Edit Profile -->
+    <!-- Modal pour sélectionner un avatar -->
+    <div v-if="isAvatarModalVisible" class="modal-overlay" @click="closeAvatarModal">
+      <div class="modal" @click.stop>
+        <h3>Select an Avatar</h3>
+        <div class="avatar-grid">
+          <div
+            v-for="avatar in avatars"
+            :key="avatar"
+            class="avatar-item"
+            @click="selectAvatar(avatar)"
+          >
+            <img :src="avatar" :alt="avatar" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button @click="closeAvatarModal">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal pour éditer le profil -->
     <div v-if="isModalVisible" class="modal-overlay" @click="closeModal">
       <div class="modal" @click.stop>
         <h3>Edit Profile</h3>
@@ -33,10 +53,12 @@
           <input type="email" v-model="user.email" id="email" required />
 
           <label for="phone">Phone</label>
-          <input type="tel" v-model="user.phoneNumber" id="phone"/>
+          <input type="tel" v-model="user.phoneNumber" id="phone" @input="validatePhone" />
+          <div v-if="phoneError" class="error">{{ phoneError }}</div>
 
           <label for="password">New Password</label>
-          <input type="password" v-model="password" id="password" placeholder="Enter new password (optional)" />
+          <input type="password" v-model="password" id="password" placeholder="Enter new password (optional)" @input="validatePassword" />
+          <div v-if="passwordError" class="error">{{ passwordError }}</div>
 
           <div class="modal-actions">
             <button type="button" @click="closeModal">Cancel</button>
@@ -48,22 +70,36 @@
   </div>
 </template>
 
+
 <script>
 import axios from '../config/axiosInstance';
 
 export default {
   data() {
     return {
+      isAvatarModalVisible: false,
+      profilePicture: require('@/assets/avatars/avatar1.png'), // Utiliser une seule fois
+      avatars: [
+        require('@/assets/avatars/avatar1.png'),
+        require('@/assets/avatars/avatar2.png'),
+        require('@/assets/avatars/avatar3.png'),
+        require('@/assets/avatars/avatar4.png'),
+        require('@/assets/avatars/avatar5.png'),
+        require('@/assets/avatars/avatar6.png'),
+        require('@/assets/avatars/avatar7.png'),
+        require('@/assets/avatars/default-avatar.png'),
+      ],
       isModalVisible: false,
-      profilePicture: '/avatar/avatar1.jpg', // Default profile picture path
       user: {
         username: '',
         firstName: '',
         lastName: '',
         email: '',
-        phone: '',
+        phoneNumber: '',
       },
       password: '', // Stores the new password to be updated
+      phoneError: null,
+      passwordError: null,
     };
   },
   async mounted() {
@@ -73,7 +109,7 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.user = response.data.user;
-      this.profilePicture = this.user.profilePicture || '/avatar/avatar1.jpg';
+      this.profilePicture = this.user.profilePicture || require('@/assets/avatars/avatar1.png');
     } catch (error) {
       console.error('Error fetching profile data:', error);
       alert('Failed to load profile data. Please log in again.');
@@ -81,14 +117,48 @@ export default {
     }
   },
   methods: {
+    openAvatarModal() {
+      this.isAvatarModalVisible = true;
+    },
+    closeAvatarModal() {
+      this.isAvatarModalVisible = false;
+    },
+    selectAvatar(avatar) {
+      this.profilePicture = avatar; // Met à jour l'image de profil localement
+      alert('Avatar updated successfully!');
+      this.closeAvatarModal();
+    },
     editProfile() {
       this.isModalVisible = true;
     },
     closeModal() {
       this.isModalVisible = false;
       this.password = ''; // Clear the password field when modal is closed
+      this.phoneError = null;
+      this.passwordError = null;
+    },
+    validatePhone() {
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(this.user.phoneNumber)) {
+        this.phoneError = 'Phone number must be exactly 10 digits.';
+      } else {
+        this.phoneError = null;
+      }
+    },
+    validatePassword() {
+      const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
+      if (this.password && !passwordRegex.test(this.password)) {
+        this.passwordError = 'Password must be at least 6 characters, include one number and one special character.';
+      } else {
+        this.passwordError = null;
+      }
     },
     async saveChanges() {
+      if (this.phoneError || this.passwordError) {
+        alert('Please fix the errors before submitting.');
+        return;
+      }
+
       try {
         const token = localStorage.getItem('token');
         const updatedData = {
@@ -253,5 +323,65 @@ button {
 .modal-actions button[type="submit"] {
   background-color: #4CAF50;
   color: white;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+.profile-container {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #333;
+  cursor: pointer;
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.avatar-item {
+  width: 80px;
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border 0.3s ease;
+}
+
+.avatar-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-item:hover {
+  border-color: #ffa500;
 }
 </style>

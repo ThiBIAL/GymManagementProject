@@ -23,20 +23,6 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use('/avatar', express.static(path.join(__dirname, '../public/avatar')));
-
-app.get('/api/avatar', (req, res) => {
-    const avatarDir = path.join(__dirname, '../public/avatar');
-    fs.readdir(avatarDir, (err, files) => {
-        if (err) {
-            console.error('Error reading avatar directory:', err);
-            return res.status(500).json({ error: 'Failed to load images', details: err.message });
-        }
-        const imageFiles = files.filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file));
-        res.json(imageFiles);
-    });
-});
-
 app.use('/src/assets', express.static(path.join(__dirname, 'src/assets')));
 
 // Middleware

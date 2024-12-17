@@ -19,8 +19,10 @@
       
       <InputField type="password" v-model="password" placeholder="Password" required />
       <div v-if="error6" class="error">{{ error6 }}</div>
+      <div v-if="error7" class="error">{{ error7 }}</div>
       
       <InputField type="password" v-model="confirmPassword" placeholder="Confirm Password" required />
+      <div v-if="error6" class="error">{{ error6 }}</div>
       <div v-if="error7" class="error">{{ error7 }}</div>
       
       <button class="button" type="submit">Sign Up</button>
@@ -62,8 +64,23 @@ export default {
   },
   methods: {
     async signup() {
+      // Validate phone number
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(this.phoneNumber)) {
+        this.error5 = '*Phone number must be exactly 10 digits.';
+        return;
+      }
+
+      // Validate password
+      const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,}$/;
+      if (!passwordRegex.test(this.password)) {
+        this.error6 = '*Password must be at least 6 characters long, include one digit, and one special character.';
+        return;
+      }
+
+      // Validate confirm password
       if (this.password !== this.confirmPassword) {
-        this.error7 = '*Both passwords must be the same';
+        this.error7 = '*Both passwords must match.';
         return;
       }
 
@@ -111,7 +128,7 @@ export default {
           alert('An error occurred. Please try again later.');
         }
       }
-    }
+    },
   },
   mounted() {
     this.$watch('username', () => {
