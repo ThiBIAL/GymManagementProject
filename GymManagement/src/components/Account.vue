@@ -49,12 +49,18 @@
     <!-- Diet Plan Popup -->
     <div v-if="isDietPlanVisible" class="diet-plan-overlay" @click="closeDietPlan">
       <div class="diet-plan-popup" @click.stop>
-        <h3>Select a Diet Plan</h3>
-        <ul>
-          <li><button @click="selectDietPlan('Mass Gain')">Mass Gain</button></li>
-          <li><button @click="selectDietPlan('Weight Loss')">Weight Loss</button></li>
-          <li><button @click="selectDietPlan('Maintenance')">Maintenance</button></li>
-        </ul>
+        <h3>Diet Plans</h3>
+        <div class="diet-plan-description">
+          <p>
+            <strong>Mass Gain:</strong> To gain mass, focus on consuming a calorie surplus with high-protein meals. Combine strength training with a balanced diet rich in complex carbohydrates, healthy fats, and lean proteins.
+          </p>
+          <p>
+            <strong>Weight Loss:</strong> For weight loss, aim for a calorie deficit by consuming nutrient-dense, low-calorie foods. Incorporate regular cardio and strength training into your routine.
+          </p>
+          <p>
+            <strong>Maintenance:</strong> To maintain your current weight, balance your calorie intake with your energy expenditure. Focus on a varied diet with adequate macro- and micronutrients.
+          </p>
+        </div>
         <div class="modal-actions">
           <button @click="closeDietPlan">Close</button>
         </div>
@@ -140,10 +146,6 @@ export default {
     },
     closeDietPlan() {
       this.isDietPlanVisible = false; // Hide the diet plan popup
-    },
-    selectDietPlan(plan) {
-      console.log(`Selected diet plan: ${plan}`);
-      this.closeDietPlan(); // Close the popup after selection
     }
   },
 };
@@ -280,6 +282,7 @@ button {
   color: white;
 }
 
+/* Diet Plan Popup Styles */
 .diet-plan-overlay {
   position: fixed;
   top: 0;
@@ -298,36 +301,29 @@ button {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  text-align: center;
+  width: 400px;
 }
 
 .diet-plan-popup h3 {
   margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
 }
 
-.diet-plan-popup ul {
-  list-style: none;
-  padding: 0;
-}
-
-.diet-plan-popup li {
-  margin: 10px 0;
-}
-
-.diet-plan-popup button {
-  padding: 10px 15px;
+.diet-plan-description {
   font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  background-color: #333;
-  color: #fff;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-.diet-plan-popup button:hover {
-  background-color: #555;
+.diet-plan-description strong {
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-actions button {
@@ -336,6 +332,9 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.modal-actions button[type="button"] {
   background-color: #ccc;
 }
 
@@ -344,4 +343,19 @@ button {
   color: white;
 }
 
+.diet-plan-popup button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.diet-plan-popup button:hover {
+  background-color: #45a049;
+}
+
 </style>
+
