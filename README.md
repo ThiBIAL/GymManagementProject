@@ -1,6 +1,8 @@
 # GymManagement
 
-Follow this README to acces to the website 
+Follow this README to acces to the website; 
+
+A gym needs a web-base system for organization, which will be used by clients, administrators, front desk and coaches. 
 
 # First Step 
 

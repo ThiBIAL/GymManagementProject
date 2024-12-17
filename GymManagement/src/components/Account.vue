@@ -13,7 +13,7 @@
       <div class="buttons-container">
         <button class="btn-view" @click="editProfile"><strong>Edit Profile</strong></button>
         <button class="btn-view" @click="viewReservations"><RouterLink to="/home">Reserved Classes</RouterLink></button>
-        <button class="btn-view" @click="viewDietPlan"><RouterLink to="/home">View Diet Plan</RouterLink></button>
+        <button class="btn-view" @click="viewDietPlan"><strong>View Diet Plan</strong></button>
         <button class="btn-logout" @click="logout"><strong>Logout</strong></button>
       </div>
     </div>
@@ -67,6 +67,27 @@
         </form>
       </div>
     </div>
+
+    <!-- Diet Plan Popup -->
+    <div v-if="isDietPlanVisible" class="diet-plan-overlay" @click="closeDietPlan">
+      <div class="diet-plan-popup" @click.stop>
+        <h3>Diet Plans</h3>
+        <div class="diet-plan-description">
+          <p>
+            <strong>Mass Gain:</strong> To gain mass, focus on consuming a calorie surplus with high-protein meals. Combine strength training with a balanced diet rich in complex carbohydrates, healthy fats, and lean proteins.
+          </p>
+          <p>
+            <strong>Weight Loss:</strong> For weight loss, aim for a calorie deficit by consuming nutrient-dense, low-calorie foods. Incorporate regular cardio and strength training into your routine.
+          </p>
+          <p>
+            <strong>Maintenance:</strong> To maintain your current weight, balance your calorie intake with your energy expenditure. Focus on a varied diet with adequate macro- and micronutrients.
+          </p>
+        </div>
+        <div class="modal-actions">
+          <button @click="closeDietPlan">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -89,7 +110,9 @@ export default {
         require('@/assets/avatars/avatar7.png'),
         require('@/assets/avatars/default-avatar.png'),
       ],
+      profilePicture: '@/assets/avatars/default-avatar.png',
       isModalVisible: false,
+      isDietPlanVisible: false,
       user: {
         username: '',
         firstName: '',
@@ -108,8 +131,12 @@ export default {
       const response = await axios.get('/auth/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       this.user = response.data.user;
-      this.profilePicture = this.user.profilePicture || require('@/assets/avatars/avatar1.png');
+
+      // Récupérer l'avatar depuis le localStorage s'il existe
+      const savedAvatar = localStorage.getItem('selectedAvatar');
+      this.profilePicture = savedAvatar || this.user.profilePicture || require('@/assets/avatars/avatar1.png');
     } catch (error) {
       console.error('Error fetching profile data:', error);
       alert('Failed to load profile data. Please log in again.');
@@ -125,6 +152,10 @@ export default {
     },
     selectAvatar(avatar) {
       this.profilePicture = avatar; // Met à jour l'image de profil localement
+
+      // Sauvegarder l'avatar sélectionné dans le localStorage
+      localStorage.setItem('selectedAvatar', avatar);
+
       alert('Avatar updated successfully!');
       this.closeAvatarModal();
     },
@@ -183,17 +214,22 @@ export default {
     },
     logout() {
       localStorage.removeItem('token');
+      localStorage.removeItem('selectedAvatar');
       this.$router.push('/SignIn');
     },
     viewReservations() {
       console.log('View reservations');
     },
     viewDietPlan() {
-      console.log('View diet plan');
+      this.isDietPlanVisible = true;
     },
+    closeDietPlan() {
+      this.isDietPlanVisible = false;
+    }
   },
 };
 </script> 
+
 
 <style scoped>
 #content {
@@ -384,4 +420,80 @@ button {
 .avatar-item:hover {
   border-color: #ffa500;
 }
+
+/* Diet Plan Popup Styles */
+.diet-plan-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.diet-plan-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+
+.diet-plan-popup h3 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.diet-plan-description {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.diet-plan-description strong {
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions button[type="button"] {
+  background-color: #ccc;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.diet-plan-popup button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.diet-plan-popup button:hover {
+  background-color: #45a049;
+}
 </style>
+

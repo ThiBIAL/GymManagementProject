@@ -10,34 +10,25 @@
       <router-link v-if="!isLoggedIn" to="/SignIn">Sign In</router-link>
       <router-link v-if="!isLoggedIn" to="/SignUp">Sign Up</router-link>
 
-            <!-- Menu déroulant spécifique au coach -->
-            <div
-        v-if="isCoach"
-        class="dropdown"
-        @mouseover="showCoachDropdown = true"
-        @mouseleave="showCoachDropdown = false"
-      >
+      <!-- Menu déroulant spécifique au coach -->
+      <div v-if="isCoach" class="dropdown" @mouseover="showCoachDropdown = true"@mouseleave="showCoachDropdown = false">
         <router-link to="/Account/:username">Coach</router-link>
-        <ul v-show="showCoachDropdown" class="dropdown-menu">
-          <li>
-            <router-link to="/AddCourses">Add Courses</router-link>
-          </li>
-          <li>
-            <router-link to="/AddFoodMonitoring">Add FoodMonitoring</router-link>
-          </li>
-          <li>
-            <router-link to="/CoachSchedule">Coach Schedule</router-link>
+          <ul v-show="showCoachDropdown" class="dropdown-menu">
+            <li>
+              <router-link to="/AddCourses">Add Courses</router-link>
+            </li>
+            <li>
+              <router-link to="/AddFoodMonitoring">Add FoodMonitoring</router-link>
+            </li>
+            <li>
+              <router-link to="/CoachSchedule">Coach Schedule</router-link>
           </li>
         </ul>
       </div>
 
+
       <!-- Menu déroulant pour le compte utilisateur -->
-      <div
-        v-if="isLoggedIn"
-        class="dropdown"
-        @mouseover="showDropdown = true"
-        @mouseleave="showDropdown = false"
-      >
+      <div v-if="isLoggedIn" class="dropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false">
         <router-link to="/Account/:username">Account</router-link>
         <ul v-show="showDropdown" class="dropdown-menu">
           <li>
@@ -45,6 +36,9 @@
           </li>
           <li v-if="isAdmin">
             <router-link to="/Member">Manage Member</router-link>
+          </li>
+          <li v-if="isAdmin">
+            <router-link to="/CreateSubscription">Manage Subscription</router-link>
           </li>
           <li>
             <router-link to="/Subscription">Subscription</router-link>
