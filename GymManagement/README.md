@@ -13,9 +13,7 @@ Create the database 'gym_db' in SQL to acces to the database with the line : 'CR
 # Thrid Step 
 
 Install the depencies and the package (if you don't have it) to be able to acces to the website : 
-'npm install express'
-'npm install express bcrypt sequelize mysql2 body-parser cors'
-'npm install multer'
+'npm install express bcrypt sequelize mysql2 body-parser cors multer'
 ...
 
 # Final Step 
